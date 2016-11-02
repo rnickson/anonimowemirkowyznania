@@ -10,6 +10,7 @@ var md5 = require('md5');
 var apiRouter = require('./api.js');
 var adminRouter = require('./admin.js');
 var conversationRouter = require('./conversation.js');
+var analizatorRouter = require('./analizator.js');
 var confessionModel = require('./models/confession.js');
 var replyModel = require('./models/reply.js');
 var userModel = require('./models/user.js');
@@ -30,6 +31,7 @@ app.use(express.static('public'));
 app.use('/api', apiRouter);
 app.use('/admin', adminRouter);
 app.use('/conversation', conversationRouter);
+app.use('/analizator', analizatorRouter);
 
 app.set('view engine', 'jade');
 
@@ -38,13 +40,14 @@ app.get('/', (req, res)=>{
 });
 app.post('/', (req, res)=>{
   var confession = new confessionModel();
-  if(req.body.survey.question){
+  if(req.body.survey&&req.body.survey.question){
     req.body.survey.answers = req.body.survey.answers.filter((e)=>{return e})
     var validationResult = surveyController.validateSurvey(req.body.survey);
     if(validationResult.success == false)return res.send(validationResult.response.message);
   }else{
     delete req.body.survey;
   }
+  req.body.text = req.body.text||'';
   confession.text = req.body.text;
   confession.IPAdress = req.ip;
   confession.embed = req.body.embed;

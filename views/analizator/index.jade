@@ -1,0 +1,19 @@
+extends ../base.jade
+block content
+  p
+    |Wyślij SMS o treści 
+    b SIM.ANALIZATOR 
+    |na numer 
+    b 7136 
+    |(koszt 1.23zł) Wysyłając wiadomość akceptujesz 
+    a(href='https://simpay.pl/dokumenty/simpay_regulamin_uzytkownik_koncowy_01_03_15.pdf', target='_blank') regulamin.
+    br
+    |To narzędzie moze byc nieco awaryjne (limity API itp) więc jeśli wpis ze statystykami nie zostanie dodany, napisz prywatną wiadomość do @sokytsinolop
+    img(href='images/simpay_banner_162_85.png')
+    br
+    |Płatności obsługuje serwis simpay.pl
+  form#confession(action="/analizator", method="post")
+    input.form-control(type="text", name="username", placeholder="Wpisz swoj nick na wykopie")
+    br
+    input.form-control(type="text", name="code", placeholder="Wpisz kod z SMS")
+    button.btn.btn-large.btn-success(type="submit") Wyślij
