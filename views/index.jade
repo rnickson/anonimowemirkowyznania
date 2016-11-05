@@ -18,9 +18,9 @@ block content
     button#addSurvey.btn.btn-large.pull-right(type="button") Dodaj ankiete
     br
     div.surveyForm(style='display: none;')
-      input.form-control(type="text", name="survey[question]", placeholder="Wpisz pytanie")
+      input.form-control(type="text", name="survey[question]", placeholder="Wpisz pytanie" minlength="5" maxlength="100")
       - for (var i = 0; i < 10; ++i) {
-        input.form-control(type="text", name="survey[answers][]", placeholder="Wpisz odpowiedź")
+        input.form-control(type="text", name="survey[answers][]", placeholder="Wpisz odpowiedź" minlength="2" maxlength="50")
       - }
     p.info Wyznania zostaną opublikowane po zaakceptowaniu (pasta o serwerowni nie przejdzie :()
   script(src='/js/main.js')

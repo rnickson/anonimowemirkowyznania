@@ -23,6 +23,12 @@ validateSurvey = function(survey){
   if(survey.answers.length > 10){
       return {success: false, response: {message: 'Nie moze byc wiecej niz 10 odpowiedzi.'}}
   }
+  if(survey.question.length > 100){
+      return {success: false, response: {message: 'Maksymalna długość pytania to 100 znakow.'}}
+  }
+  for(let i in survey.answers){
+    if(survey.answers[i].length>50){ return {success: false, response: {message: 'Maksymalna długość odpowiedzi to 50 znakow.'}}}
+  }
   return {success: true}
 }
 saveSurvey = function(confession, surveyData){
