@@ -26,7 +26,7 @@ validateSurvey = function(survey){
   if(survey.question.length > 100){
       return {success: false, response: {message: 'Maksymalna długość pytania to 100 znakow.'}}
   }
-  for(let i in survey.answers){
+  for(var i in survey.answers){
     if(survey.answers[i].length>50){ return {success: false, response: {message: 'Maksymalna długość odpowiedzi to 50 znakow.'}}}
   }
   return {success: true}
