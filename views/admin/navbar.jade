@@ -1,13 +1,21 @@
 nav.navbar.navbar-default.navbar-static-top
+    div.container
         .navbar-header
-          a.navbar-brand(href='/admin/confessions') admin panel [#{user.username}]
+          a.navbar-brand(href="/")
+            img(src="/images/pepe.png")
+          button(type="button", class="navbar-toggle collapsed", data-toggle="collapse", data-target="#navbar", aria-expanded="false", aria-controls="navbar")
+            span.sr-only Toggle navigation
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar
+          a.navbar-brand(href='/admin/confessions') Admin Panel [#{user.username}]
         #navbar.navbar-collapse
-          ul.nav.navbar-nav
+          ul.nav.navbar-nav.navbar-right
             li
-              a(href='/admin/confessions') confessions
+              a(href='/admin/confessions') Wyznania
             li
-              a(href='/admin/replies') replies
+              a(href='/admin/replies') Odpowiedzi
             if user
               li
-                a(href='/admin/logout') logout
+                a(href='/admin/logout') Wyloguj
         // /.nav-collapse

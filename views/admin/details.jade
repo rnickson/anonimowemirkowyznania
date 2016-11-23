@@ -1,5 +1,69 @@
 extends ./base.jade
 block content
+<<<<<<< HEAD
+  .container
+    .row
+      .col-xs-6.col-md-10
+        .panel.panel-default
+          .panel-heading
+            |Wpis 
+            if confession.entryID
+              a(href="http://wykop.pl/wpis/#{confession.entryID}" target="_blank") #{confession.entryID}
+            .pull-right
+              span.label.label-small.label-success.actionButton&attributes({'data-action':'accept', 'data-id':confession.id, 'data-object':'confession'}) Dodaj
+              if !confession.entryID
+                span.label.label-small.label-danger.actionButton(style="margin-left: 1em;")&attributes({'data-action':'danger', 'data-id':confession.id, 'data-object':'confession'}) Nieodpowiednia
+              else
+                span.label.label-big.label-danger.actionButton(style="margin-left: 1em;")&attributes({'data-action':'delete', 'data-id':confession.id, 'data-object':'confession'}) Usuń z mikrobloga!
+          .panel-body(style='white-space:pre-wrap; word-break: break-all;')
+            |#{confession.text}
+            hr
+            a(href="#{confession.embed}", target="_blank")
+              img(src="#{confession.embed}", style="max-width: 200px; max-height: 200px;").img-responsive
+            if confession.survey
+              h4 Ankieta
+              ul
+                li Pytanie: #{confession.survey.question}
+                  ul
+                    each answer, i in confession.survey.answers
+                      li #{answer}
+            #tagi 
+              h4 Tagi
+              ul.list-group
+                each tag, index in confession.tags
+                  li.list-group-item(style="width: 25em;")
+                    -var klass = (tag[1] === 1 ? 'ok text-success' : 'remove text-danger')
+                    a.actionButton&attributes({'data-action':'tags', 'data-id':confession.id, 'data-object':'confession', 'data-tag':tag[0].slice(1)}) #{tag[0]}
+                    span(class='glyphicon glyphicon-'+klass, style="margin-left: 0.5em;")
+              hr
+            #akcje
+              h4 Akcje
+              .list-group
+                each action, index in confession.actions
+                  a.list-group-item
+                    h4.list-group-item-heading A:#{index} T:#{action.type}
+                    p.list-group-item-text
+                    |#{action.action} 
+                    if action.user
+                      | przez 
+                      em #{action.user.username} 
+                    | #{action.time}
+            ul
+              li Wyznania dodane z tego samego IP:
+                span.badge #{confession.addedFromSameIP.length}
+              ul
+                each related, index in confession.addedFromSameIP
+                  case related.status
+                    when 0
+                      -var klass = 'time text-warning'
+                    when 1 
+                      -var klass = 'ok text-success'
+                    default
+                      -var klass = 'remove text-danger'
+                  li
+                    a(href="#{related._id}") Wyznanie ##{index}
+                    span(class='glyphicon glyphicon-'+klass, style="margin-left: 0.5em;")
+=======
   .panel.panel-default
     .panel-heading
       |Wpis 
@@ -50,6 +114,7 @@ block content
     a(href="#{related._id}") Wyznanie ##{index}
     span(class='glyphicon glyphicon-'+klass)
     br
+>>>>>>> 0cc9b8e00abd8dc391869d0ac00b114ab3a82904
 block script
   script(type="text/javascript")
     include ./scripts/panel.js

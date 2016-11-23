@@ -88,7 +88,7 @@ apiRouter.route('/confession/tags/:confession_id/:tag').get((req, res)=>{
     actionController(confession, req.decoded._doc._id, 9);
     confessionModel.update({_id: req.params.confession_id}, {$set: {tags: tagController.prepareArray(confession.tags, req.params.tag)}}, (err)=>{
       if(err)return res.json({success: false, response: {message: err}});
-      res.json({success: true, response: {message: 'Tagi zaaktualizowano'}});
+      res.json({success: true, response: {message: 'Tagi zaaktualizowano', status: 'success'}});
     });
   });
 });

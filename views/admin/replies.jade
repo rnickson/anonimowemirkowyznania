@@ -1,36 +1,42 @@
 extends ./base.jade
 block content
-  table.table.table-stripped
-    tr
-      td _id
-      td alias
-      td text
-      td embed
-      td authString
-      td parentID
-      td addedBy
-      td ACTIONS
-      each reply, index in replies
-        case reply.status
-          when -1
-            -var rowClass = 'danger'
-          when 1
-            -var rowClass = 'success'
-          default
-            -var rowClass = 'warning'
-        tr(class=rowClass)
-          td #{reply._id}
-          td #{reply.alias}
-          td #{reply.text}
-          td
-           a(href="#{reply.embed}", target="_blank") #{reply.embed}
-          td #{reply.auth}
-          td 
-            a(href="http://wykop.pl/wpis/#{reply.parentID.entryID}", target="_blank") #{reply.parentID.entryID}
-          td #{reply.addedBy}
-          td
-            button.btn.btn-success.actionButton&attributes({'data-action':'accept', 'data-id':reply.id, 'data-object':'reply'}) Dodaj
-            span.label.label-small.label-danger.actionButton&attributes({'data-action':'danger', 'data-id':reply.id, 'data-object':'reply'}) Nieodpowiednia
+  .container
+    .row
+      .col-xs-6.col-md-12
+        .panel.panel-default(style='white-space:pre-wrap;')
+          table.table.table-bordered.table-striped
+            thead
+              tr
+                th ID
+                th Nick
+                th Treść
+                th Obrazek
+                th Auth
+                th Link na wykopie
+                th Dodany przez
+                th Akcje
+            tr
+              each reply, index in replies
+                case reply.status
+                  when -1
+                    -var rowClass = 'danger'
+                  when 1
+                    -var rowClass = 'success'
+                  default
+                    -var rowClass = 'warning'
+                tr(class=rowClass)
+                  td #{reply._id}
+                  td #{reply.alias}
+                  td #{reply.text}
+                  td
+                   a(href="#{reply.embed}", target="_blank") #{reply.embed}
+                  td #{reply.auth}
+                  td 
+                    a(href="http://wykop.pl/wpis/#{reply.parentID.entryID}", target="_blank") #{reply.parentID.entryID}
+                  td #{reply.addedBy}
+                  td
+                    button.btn.btn-success.actionButton&attributes({'data-action':'accept', 'data-id':reply.id, 'data-object':'reply'}) Dodaj
+                    span.label.label-small.label-danger.actionButton(style="display: block; margin-top: 0.5em;")&attributes({'data-action':'danger', 'data-id':reply.id, 'data-object':'reply'}) Nieodpowiednia
 block script
   script(type="text/javascript")
     include ./scripts/panel.js
