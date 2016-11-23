@@ -5,11 +5,13 @@ block content
     | Wyznanie pojawi się na mikroblogu po zaakceptowaniu
     br
     | Kod autoryzacji: <strong>#{confession.auth}</strong> (dzięki niemu będziesz mogł odpowiadać w swoim wpisie jako OP).
-    | Pod tym linkiem mozesz przeglądać co dzieje się z twoim wyzaniem i jakie akcje zostały podjęte, mozesz takze czytac wiadomosci prywatne, jesli jakies się pojawią. 
+    | Pod tym linkiem mozesz przeglądać co dzieje się z twoim wyzaniem i jakie akcje zostały podjęte, mozesz takze czytac wiadomosci prywatne, jesli jakies się pojawią.
     b Pamiętaj kod jest tajny i jeśli dostanie się w ręce osob trzecich uzyskaja dostep do twoich prywatnych wiadomosci i beda mogly odpowiadac w twoim imieniu
   .panel.panel-default
     .panel-heading
       |Wpis
+      if confession.entryID
+        a(href="http://wykop.pl/wpis/#{confession.entryID}" target="_blank") #{confession.entryID}
     .panel-body(style='white-space:pre;')
       |#{confession.text}
       img(src="#{confession.embed}").img-responsive
