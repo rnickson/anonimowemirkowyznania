@@ -2,7 +2,7 @@ extends ./base.jade
 block content
   .container
     .row
-      .col-xs-6.col-md-12
+      .col-md-12
         .panel.panel-default(style='white-space:pre-wrap;')
           .table-responsive
             table.table.table-bordered.table-striped
@@ -32,7 +32,8 @@ block content
                       span.glyphicon.glyphicon-info-sign
                     td #{confession.text}
                     td
-                     a(href="#{confession.embed}", target="_blank") Otwórz
+                      if confession.embed
+                      a(href="#{confession.embed}", target="_blank") Otwórz
                     td #{confession.auth}
                     td 
                       a(href="http://wykop.pl/wpis/#{confession.entryID}", target="_blank") #{confession.entryID}
