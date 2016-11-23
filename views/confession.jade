@@ -6,23 +6,19 @@ block content
     br
     | Kod autoryzacji: <strong>#{confession.auth}</strong> (dzięki niemu będziesz mogł odpowiadać w swoim wpisie jako OP).
     | Pod tym linkiem mozesz przeglądać co dzieje się z twoim wyzaniem i jakie akcje zostały podjęte, mozesz takze czytac wiadomosci prywatne, jesli jakies się pojawią.
-    b Pamiętaj kod jest tajny i jeśli dostanie się w ręce osob trzecich uzyskaja dostep do twoich prywatnych wiadomosci i beda mogly odpowiadac w twoim imieniu
+    b  Pamiętaj kod jest tajny i jeśli dostanie się w ręce osob trzecich uzyskaja dostep do twoich prywatnych wiadomosci i beda mogly odpowiadac w twoim imieniu
   .panel.panel-default
     .panel-heading
       |Wpis
-<<<<<<< HEAD
       if confession.entryID
-        a(href="http://wykop.pl/wpis/#{confession.entryID}" target="_blank") #{confession.entryID}
-    .panel-body(style='white-space:pre;')
-=======
+        a(href="http://wykop.pl/wpis/#{confession.entryID}" target="_blank")  #{confession.entryID}
     .panel-body(style='white-space:pre-wrap;')
->>>>>>> e29c20c896b08a292f1b5f1d0f7af57cc8b34899
       |#{confession.text}
       if confession.survey
         hr
         h3 Ankieta
         ul
-          li 
+          li
             strong Pytanie: #{confession.survey.question}
             ul
               each answer, i in confession.survey.answers
@@ -36,7 +32,10 @@ block content
         |#{action.action} #{action.time}
   h3 Konwersacje
   ul.list-group
-    each conversation, index in confession.conversations
-        li.list-group-item
-          span.badge 34
-          a(href="../../conversation/#{conversation}/#{confession.auth}") #{conversation}
+    if confession.conversations
+      each conversation, index in confession.conversations
+          li.list-group-item
+            span.badge 34
+            a(href="../../conversation/#{conversation}/#{confession.auth}") #{conversation}
+    else
+    p Nie masz jeszcze zadnych konwersacji

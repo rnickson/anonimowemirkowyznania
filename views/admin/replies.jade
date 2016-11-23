@@ -30,10 +30,14 @@ block content
                     td #{reply.alias}
                     td #{reply.text}
                     td
-                     a(href="#{reply.embed}", target="_blank") Otwórz
+                      if reply.embed
+                        a(href="#{reply.embed}", target="_blank")
+                          img(src="#{reply.embed}" height="50" width="50")
+                          |Otwórz
                     td #{reply.auth}
-                    td 
-                      a(href="http://wykop.pl/wpis/#{reply.parentID.entryID}", target="_blank") #{reply.parentID.entryID}
+                    td
+                      if reply.parentID
+                        a(href="http://wykop.pl/wpis/#{reply.parentID.entryID}", target="_blank") #{reply.parentID.entryID}
                     td #{reply.addedBy}
                     td
                       button.btn.btn-success.actionButton&attributes({'data-action':'accept', 'data-id':reply.id, 'data-object':'reply'}) Dodaj
