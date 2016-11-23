@@ -2,25 +2,28 @@ extends ./base.jade
 block content
   if success
     .alert.alert-success
-      strong Dodano!
+      strong Dodano! &nbsp;
       | Wyznanie pojawi się na mikroblogu po zaakceptowaniu
       br
       | Jeśli chcesz to zapisz ten kod: <strong>#{confession.auth}</strong> (dzięki niemu będziesz mogł odpowiadać w swoim wpisie jako OP).
-      | Pod tym linkiem mozesz przeglądać co dzieje się z twoim wyzaniem i jakie akcje zostały podjęte, mozesz takze czytac wiadomosci prywatne, jesli jakies się pojawią. Pamiętaj kod jest tajny i jeśli dostanie się w ręce osob trzecich uzyskaja dostep do twoich prywatnych wiadomosci i beda mogly odpowiadac w twoim imieniu
-  p.info Napisz co leży Ci na sercu, post zostanie opublikowany anonimowo (z konta @AnonimoweMirkoWyznania) na mikroblogu po zaakceptowaniu.
+      | Pod tym linkiem możesz przeglądać co dzieje się z twoim wyznaniem i jakie akcje zostały podjęte niego podjęte, możesz także czytać wiadomości prywatne, jeśli jakieś się pojawią. Pamiętaj! Kod jest tajny i jeśli dostanie się w ręce osób trzecich, to uzyskają one dostęp do twoich prywatnych wiadomości i będą mogły odpowiadać w twoim imieniu.
+  p.info Napisz co leży Ci na sercu, a następnie post zostanie opublikowany anonimowo (z konta @AnonimoweMirkoWyznania) na mikroblogu po zaakceptowaniu.
    .add-confession
      h1 Dodaj wyznanie
     form#confession(action="/", method="post")
-    textarea.form-control(type="text", name="text", placeholder="Wpisz tutaj swoje wyznanie" rows=10)
-    br
-    input.form-control(type="url", name="embed", placeholder="URL do obrazka", maxlength=3000)
-    button.btn.btn-large.btn-success(type="submit") Wyślij
-    button#addSurvey.btn.btn-large.pull-right(type="button") Dodaj ankiete
-    br
-    div.surveyForm(style='display: none;')
-      input.form-control(type="text", name="survey[question]", placeholder="Wpisz pytanie" minlength="5" maxlength="100")
-      - for (var i = 0; i < 10; ++i) {
-        input.form-control(type="text", name="survey[answers][]", placeholder="Wpisz odpowiedź" minlength="2" maxlength="50")
-      - }
-    p.info Wyznania zostaną opublikowane po zaakceptowaniu (pasta o serwerowni nie przejdzie :()
+      .form-group
+        textarea.form-control(type="text", name="text", placeholder="Wpisz tutaj swoje wyznanie" rows=10)
+      .form-group
+        input.form-control(type="url", name="embed", placeholder="URL do obrazka", maxlength=3000)
+      button.btn.btn-large.btn-success(type="submit") Wyślij
+      button#addSurvey.btn.btn-large.pull-right(type="button") Dodaj ankietę
+      div.surveyForm(style='margin-top: 10px; display: none;')
+          .form-group
+            input.form-control(type="text", name="survey[question]", placeholder="Wpisz pytanie" minlength="5" maxlength="100")
+          - for (var i = 0; i < 10; ++i) {
+            .form-group
+              input.form-control(type="text", name="survey[answers][]", placeholder="Wpisz odpowiedź" minlength="2" maxlength="50")
+          - }
+    p.info Wyznania zostaną opublikowane po zaakceptowaniu (pasta o serwerowni nie przejdzie ( ͡° ʖ̯ ͡°))
   script(src='/js/main.js')
+  script(src='/js/sweetalert.min.js')

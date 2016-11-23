@@ -1,7 +1,7 @@
 extends ./base.jade
 block content
   .alert.alert-success
-    strong Dodano!
+    strong Dodano! &nbsp;
     | Wyznanie pojawi się na mikroblogu po zaakceptowaniu
     br
     | Kod autoryzacji: <strong>#{confession.auth}</strong> (dzięki niemu będziesz mogł odpowiadać w swoim wpisie jako OP).
@@ -10,17 +10,24 @@ block content
   .panel.panel-default
     .panel-heading
       |Wpis
+<<<<<<< HEAD
       if confession.entryID
         a(href="http://wykop.pl/wpis/#{confession.entryID}" target="_blank") #{confession.entryID}
     .panel-body(style='white-space:pre;')
+=======
+    .panel-body(style='white-space:pre-wrap;')
+>>>>>>> e29c20c896b08a292f1b5f1d0f7af57cc8b34899
       |#{confession.text}
+      if confession.survey
+        hr
+        h3 Ankieta
+        ul
+          li 
+            strong Pytanie: #{confession.survey.question}
+            ul
+              each answer, i in confession.survey.answers
+                li #{answer}
       img(src="#{confession.embed}").img-responsive
-  if confession.survey
-    h4 Ankieta
-    |Pytanie: #{confession.survey.question}
-    ul
-      each answer, i in confession.survey.answers
-        li #{answer}
   h3 Akcje
   .list-group
     each action, index in confession.actions

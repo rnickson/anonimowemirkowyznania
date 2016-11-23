@@ -1,21 +1,3 @@
-$('.actionButton').click(function(){
-  var parent = $(this).parent().parent();
-  var endpoint = `/api/${$(this).data("object")}/${$(this).data("action")}/${$(this).data("id")}`;
-  if($(this).data("action")=='tags'){
-    endpoint+=`/${$(this).data("tag")}`
-  }
-  $.ajax({
-      type: "GET",
-      url: endpoint
-  })
-  .done(function( response ) {
-    parent.removeClass().toggleClass(response.response.status);
-    notify(response.response.status, response.response.message);
-  })
-  .fail(function(err){
-    notify('danger', `HTTP ERROR [${err.status}] - ${err.statusText}`);
-  });
-});
 function getNotificationType(type){
   var types = {
     'success': 'success',
@@ -25,5 +7,35 @@ function getNotificationType(type){
   return types[type];
 }
 function notify(type, message){
-  return alert(message);
+  return swal({
+    title: message,
+    text: "Ta wiadomość ulegnie samozniszczeniu za 2 sekundy!",
+    type: getNotificationType(type),
+    timer: 2000
+  });
 }
+$('.actionButton').click(function(){
+  var obj = $(this);
+  var parent = obj.parent().parent();
+  var span = obj.next();
+  var endpoint = `/api/${obj.data("object")}/${obj.data("action")}/${obj.data("id")}`;
+  if(obj.data("action")=='tags'){
+    endpoint+=`/${obj.data("tag")}`
+  }
+  $.ajax({
+      type: "GET",
+      url: endpoint
+  })
+  .done(function( response ) {
+      if(obj.data("action")=='tags'){
+        span.toggleClass("glyphicon glyphicon-ok text-success").toggleClass("glyphicon glyphicon-remove text-danger");
+      }
+      else {
+        parent.removeClass().toggleClass(response.response.status);
+      }
+      notify(response.response.status, response.response.message);
+  })
+  .fail(function(err){
+    notify('error', `HTTP ERROR [${err.status}] - ${err.statusText}`);
+  });
+});

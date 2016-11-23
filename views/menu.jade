@@ -1,18 +1,22 @@
-.navbar
-  .container
-    .navbar-header
-      a.navbar-brand(href='/') Anonimowe Mirko Wyznania
-    .collapse.navbar-collapse
-      ul.nav.navbar-nav
-        li.active
-          a(href='/') Dodaj
-        li
-          a(href='/analizator') analizator
-        li
-          a(href='http://www.wykop.pl/tag/anonimowemirkowyznania', target='_blank') Przeglądaj dodane wyznania
-        li
-          a(href='/cotojest') O projekcie
-        li
-          a(href='http://www.wykop.pl/wiadomosc-prywatna/konwersacja/sokytsinolop/') Kontakt
-        li
-          a(href='https://github.com/cymruu/anonimowemirkowyznania', target='_blank') Github
+nav.navbar.navbar-default.navbar-static-top
+    .container
+      .navbar-header
+        a.navbar-brand(href='/') Anonimowe Mirko Wyznania
+        button(type="button", class="navbar-toggle collapsed", data-toggle="collapse", data-target="#navbar", aria-expanded="false", aria-controls="navbar")
+          span.sr-only Toggle navigation
+          span.icon-bar
+          span.icon-bar
+          span.icon-bar
+      #navbar.navbar-collapse
+        ul.nav.navbar-nav.navbar-right
+          li
+            a(href='/') Dodaj
+          li
+            a(href='http://www.wykop.pl/tag/anonimowemirkowyznania', target='_blank') Przeglądaj dodane wyznania
+          li
+            a(href='/cotojest') O projekcie
+          li
+            a(href='http://www.wykop.pl/wiadomosc-prywatna/konwersacja/sokytsinolop/') Kontakt
+          li
+            a(href='https://github.com/cymruu/anonimowemirkowyznania', target='_blank') Github
+      // /.nav-collapse
