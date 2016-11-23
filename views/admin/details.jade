@@ -14,7 +14,7 @@ block content
                 span.label.label-small.label-danger.actionButton(style="margin-left: 1em;")&attributes({'data-action':'danger', 'data-id':confession.id, 'data-object':'confession'}) Nieodpowiednia
               else
                 span.label.label-big.label-danger.actionButton(style="margin-left: 1em;")&attributes({'data-action':'delete', 'data-id':confession.id, 'data-object':'confession'}) Usuń z mikrobloga!
-          .panel-body(style='white-space:pre-wrap; word-break: break-all;')
+          .panel-body(style='white-space:pre-wrap;')
             |#{confession.text}
             hr
             a(href="#{confession.embed}", target="_blank")
