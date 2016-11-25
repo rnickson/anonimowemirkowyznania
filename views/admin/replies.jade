@@ -30,7 +30,9 @@ block content
                   td #{reply.text}
                   td
                     if reply.embed
-                      a(href="#{reply.embed}", target="_blank") Otwórz
+                      a(href="#{reply.embed}", target="_blank")
+                        img(src="#{reply.embed}", width="50", height="50" target="_blank")
+                        |Otwórz
                   td #{reply.auth}
                   td
                     a(href="http://wykop.pl/wpis/#{reply.parentID.entryID}", target="_blank") #{reply.parentID.entryID}
