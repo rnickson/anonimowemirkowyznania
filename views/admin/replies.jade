@@ -29,10 +29,10 @@ block content
                   td #{reply.alias}
                   td #{reply.text}
                   td
-                    if confession.embed
-                   a(href="#{reply.embed}", target="_blank") Otwórz
+                    if reply.embed
+                      a(href="#{reply.embed}", target="_blank") Otwórz
                   td #{reply.auth}
-                  td 
+                  td
                     a(href="http://wykop.pl/wpis/#{reply.parentID.entryID}", target="_blank") #{reply.parentID.entryID}
                   td #{reply.addedBy}
                   td
