@@ -14,7 +14,6 @@ block content
                 th Link na wykopie
                 th Dodany przez
                 th Akcje
-            tr
               each confession, index in confessions
                 case confession.status
                   when -1
@@ -24,7 +23,7 @@ block content
                   default
                     -var rowClass = 'warning'
                 tr(class=rowClass)
-                  td 
+                  td
                    a(href="details/#{confession._id}") #{confession._id}
                    if confession.survey
                     br
@@ -32,9 +31,11 @@ block content
                   td #{confession.text}
                   td
                     if confession.embed
-                    a(href="#{confession.embed}", target="_blank") Otwórz
+                      a(href="#{confession.embed}", target="_blank")
+                        img(src="#{confession.embed}", width="50", height="50" target="_blank")
+                        |Otwórz
                   td #{confession.auth}
-                  td 
+                  td
                     a(href="http://wykop.pl/wpis/#{confession.entryID}", target="_blank") #{confession.entryID}
                   td #{confession.addedBy}
                   td
