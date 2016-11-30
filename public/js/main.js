@@ -455,11 +455,11 @@ var wykop = {};
                 if (cached) {
                     displayItems(cached['items']);
                 } else {
-                    $.get(options.source + '?search_text=' + escape(q), {}, function(txt) {
+                    $.get("https://query.yahooapis.com/v1/public/yql", {q: "select * from json where url=\""+options.source + '?search_text=' + escape(q)+"\"", format: "json"}, function(txt) {
                         $results.hide();
-                        var items = parseJSON(txt, q);
+                        var items = parseJSON(txt.query.results.json, q);
                         displayItems(items);
-                        addToCache(q, items, txt.length);
+                        addToCache(q, items, txt.query.results.json.length);
                     }, 'json');
                 }
             } else {
@@ -623,12 +623,12 @@ wykop.bindSuggest = function(selector) {
         if (typeof $(this).data().suggest != "undefined") {
             switch ($(this).data().suggest) {
             case 'tag':
-                $(this).suggest("http://cors.io/?http://www.wykop.pl/ajax/suggest/tag", {
+                $(this).suggest("http://www.wykop.pl/ajax/suggest/tag", {
                     natural: false
                 });
                 break;
             case 'user':
-                $(this).suggest("http://cors.io/?http://www.wykop.pl/ajax/suggest/user", {
+                $(this).suggest("http://www.wykop.pl/ajax/suggest/user", {
                     natural: false
                 });
                 break;
@@ -637,7 +637,7 @@ wykop.bindSuggest = function(selector) {
     });
 };
 wykop.bindNaturalSuggest = function(selector) {
-    $(selector).suggest("http://cors.io/?http://www.wykop.pl/ajax/suggest/", {
+    $(selector).suggest("http://www.wykop.pl/ajax/suggest/", {
         natural: true
     });
 };
