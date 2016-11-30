@@ -10,7 +10,6 @@ var md5 = require('md5');
 var apiRouter = require('./api.js');
 var adminRouter = require('./admin.js');
 var conversationRouter = require('./conversation.js');
-var analizatorRouter = require('./analizator.js');
 var confessionModel = require('./models/confession.js');
 var replyModel = require('./models/reply.js');
 var userModel = require('./models/user.js');
@@ -31,7 +30,6 @@ app.use(express.static('public'));
 app.use('/api', apiRouter);
 app.use('/admin', adminRouter);
 app.use('/conversation', conversationRouter);
-app.use('/analizator', analizatorRouter);
 
 app.set('view engine', 'jade');
 

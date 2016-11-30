@@ -5,10 +5,21 @@ var conversationController = require('./controllers/conversations.js');
 conversationRouter.get('/:confessionid/new', (req, res)=>{
   confessionModel.findById(req.params.confessionid, (err, confession)=>{
     if(err) return res.sendStatus(404);
-    conversationController.createNewConversation(confession, (err, conversationid)=>{
-      if(err) return res.send(500);
-      res.redirect(`/conversation/${conversationid}`);
-    });
+    res.render('conversation', {});
+  });
+});
+conversationRouter.post('/:confessionid/new', (req, res)=>{
+  confessionModel.findById(req.params.confessionid, (err, confession)=>{
+    if(err) return res.sendStatus(404);
+    if(req.body.text){
+      conversationController.createNewConversation(confession, (err, conversationid)=>{
+        if(err) return res.sendStatus(500);
+        conversationController.newMessage(conversationid, null, req.body.text, (err)=>{
+          if(err)return res.send(err);
+          return res.redirect(`/conversation/${conversationid}`);
+        });
+      });
+    }
   });
 });
 conversationRouter.get('/:conversationid/:auth?', (req, res)=>{
