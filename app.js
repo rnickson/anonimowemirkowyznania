@@ -150,6 +150,9 @@ app.get('/followers/:confessionid', (req, res)=>{
 app.get('/cotojest', (req, res)=>{
   res.render('cotojest');
 });
+app.get('/twojewyznania', (req, res)=>{
+  res.render('confessionsList');
+});
 app.listen(_port, ()=>{
   console.log('listening on port '+_port);
 });
