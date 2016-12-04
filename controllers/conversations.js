@@ -24,6 +24,7 @@ var conversationController = {
       if(err) return cb(err);
       if(!text) return cb('wpisz tresc wiadomosci');
       if(!conversation) return cb('nie odnaleziono konwersacji');
+      if(conversation.messages[conversation.messages.length-1].text==text)return cb(null);
       conversation.messages.push({time: new Date(), text: text, OP:auth==conversation.parentID.auth?true:false});
       conversation.save((err)=>{
         if(err) return cb(err);
