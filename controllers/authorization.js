@@ -1,5 +1,7 @@
 var jwt = require('jsonwebtoken');
 var config = require('../config.js');
+var mongoose = require('mongoose');
+var userModel = require('../models/user.js');
 module.exports = function(req, res, next){
     var token = req.cookies.token || req.body.token || req.query.token || req.headers['x-access-token'];
     if (token) {
@@ -7,8 +9,10 @@ module.exports = function(req, res, next){
     if (err){
         return res.render('./admin/login.jade', {user: {}, error: 'Sesja wygasła'});
       }else{
-        req.decoded = decoded;
-        return next();
+        userModel.findById(decoded._doc._id, (err, user)=>{
+          if(!err)req.user = user;
+          return next();
+        });
       }
     });
     }else{

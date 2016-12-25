@@ -5,6 +5,7 @@ var mongoose = require('mongoose');
 var config = require('./config.js');
 var confessionModel = require('./models/confession.js');
 var auth = require('./controllers/authorization.js');
+var accessController = require('./controllers/access.js');
 var replyModel = require('./models/reply.js');
 var userModel = require('./models/user.js');
 //authoriztion
@@ -39,12 +40,13 @@ adminRouter.get('/', (req, res)=>{
   res.redirect('/admin/confessions');
 });
 adminRouter.get('/details/:confession_id', (req, res)=>{
+  if(!accessController(req.user.flags, 'viewDetails'))return res.send('You\'re not permitted to see this page.');
   confessionModel.findById(req.params.confession_id).populate([{path:'actions', options:{sort: {_id: -1}}, populate: {path: 'user', select: 'username'}}, {path:'survey'}]).exec((err, confession)=>{
     if(err) return res.send(err);
     confessionModel.find({IPAdress: confession.IPAdress}, {_id: 1, status: 1}, function(err, results){
       if(err)return res.send(err);
       confession.addedFromSameIP = results;
-      res.render('./admin/details.jade', {user: req.decoded._doc, confession});
+      res.render('./admin/details.jade', {user: req.user, confession});
     });
   });
 });
@@ -53,13 +55,13 @@ adminRouter.get('/confessions/:filter?', (req, res)=>{
   req.params.filter?search = {status: req.params.filter}:search = {};
   confessionModel.find(search).sort({_id: -1}).limit(100).exec((err, confessions)=>{
     if(err) res.send(err);
-    res.render('./admin/confessions.jade', {user: req.decoded._doc, confessions: confessions});
+    res.render('./admin/confessions.jade', {user: req.user, confessions: confessions});
   });
 });
 adminRouter.get('/replies', (req, res)=>{
   replyModel.find().populate('parentID').sort({_id: -1}).limit(100).exec((err, replies)=>{
     if(err) res.send(err);
-    res.render('./admin/replies.jade', {user:req.decoded._doc, replies: replies});
+    res.render('./admin/replies.jade', {user:req.user, replies: replies});
   });
 });
 module.exports = adminRouter;

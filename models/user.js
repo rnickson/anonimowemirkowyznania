@@ -6,7 +6,7 @@ var user = new Schema({
   password: String,
   avatar: String,
   userkey: String,
-  authorized: {type: Boolean, default: false}
+  flags: {type: Number, default: 0}
 });
 
 module.exports = mongoose.model('users', user);
