@@ -15,7 +15,8 @@ const permissions = {
   'viewDetails': 1<<5,
   'updateTags': 1<<6,
 };
-function getFlag(permits=[]) {
+function getFlag(permits) {
+  permits=permits||[];
   var flag = 0;
   for (var i = 0; i < permits.length; i++) {
     flag|=permissions[permits[i]];
