@@ -66,36 +66,42 @@ wykopLogin = function(cb){
     }
   });
 }
-acceptSurvey = function(confession, req, cb){
+acceptSurvey = function(confession, user, cb){
   cb=cb||function(){};
-  var entryBody = `#anonimowemirkowyznania \n${confession.text}\n\n [Kliknij tutaj, aby odpowiedzieć w tym wątku anonimowo](${config.siteURL}/reply/${confession._id}) \n[Kliknij tutaj, aby wysłać OPowi anonimową wiadomość prywatną](${config.siteURL}/conversation/${confession._id}/new) \nPost dodany za pomocą skryptu AnonimoweMirkoWyznania ( ${config.siteURL} ) Zaakceptował: ${req.user.username}`;
-  request({method:'POST', url: addEntryEndpoint+hash, form: {body: tagController.trimTags(entryBody, confession.tags), 'survey[answers]':confession.survey.answers, 'survey[question]': confession.survey.question, attachment: req.attachment.hash}, jar:wykopSession}, function(err, response, body){
-    if(err)return;
-    try {
-      var entryId = body.match(idRegex)[1];
-    } catch (e) {
-      return cb({success: false, response: {message: 'Renewing cookies, please try again in 10 seconds.', status: 'error'}})
-    }
-    actionController(confession, req.user._id, 1);
-    confession.status = 1;
-    confession.addedBy = req.user.username;
-    confession.entryID = entryId;
-    confession.save((err)=>{
-      if(err)return cb({success: false, response: {message: 'couln\'t save confession', status: 'error'}});
-      return cb({success: true, response: {message: 'Entry added: '+entryId, status: 'surveyAdded'}});
+  var entryBody = `#anonimowemirkowyznania \n${confession.text}\n\n [Kliknij tutaj, aby odpowiedzieć w tym wątku anonimowo](${config.siteURL}/reply/${confession._id}) \n[Kliknij tutaj, aby wysłać OPowi anonimową wiadomość prywatną](${config.siteURL}/conversation/${confession._id}/new) \nPost dodany za pomocą skryptu AnonimoweMirkoWyznania ( ${config.siteURL} ) Zaakceptował: ${user.username}`;
+  uploadAttachment(confession.embed, (result)=>{
+    if(!result.success)return cb({success: false, response: {message: 'couln\'t upload attachment', status: 'error'}});
+    var data = {body: tagController.trimTags(entryBody, confession.tags), 'survey[answers]':confession.survey.answers, 'survey[question]': confession.survey.question};
+    if(result.hash)data.attachment = result.hash;
+    request({method:'POST', url: addEntryEndpoint+hash, form: data, jar:wykopSession}, function(err, response, body){
+      if(err)return cb({success: false, response: {message: 'Wykop umar', status: 'error'}});
+      try {
+        var entryId = body.match(idRegex)[1];
+      } catch (e) {
+        return cb({success: false, response: {message: 'Renewing cookies, please try again in 10 seconds.', status: 'error'}})
+      }
+      actionController(confession, user._id, 1);
+      confession.status = 1;
+      confession.addedBy = user.username;
+      confession.entryID = entryId;
+      confession.save((err)=>{
+        if(err)return cb({success: false, response: {message: 'couln\'t save confession', status: 'error'}});
+        return cb({success: true, response: {message: 'Entry added: '+entryId, status: 'surveyAdded'}});
+      });
     });
   });
 }
 uploadAttachment = function(url, cb){
+  if(!url)return cb({success: true, hash: false});
   request({method: 'POST', url: uploadAttachmentEndpoint+hash, form: {url}}, function(err, response, body){
     try {
       var hash = body.match(embedHashRegex)[1];
     } catch (e) {
-      return cb({success: false, response: {message: 'couln\'t upload attachment'}});
+      return cb({success: false});
     }
     return cb({success:true, hash: hash});
   });
 }
 module.exports = {
-    validateSurvey, saveSurvey, acceptSurvey, wykopLogin, uploadAttachment
+    validateSurvey, saveSurvey, acceptSurvey, wykopLogin
 };

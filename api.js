@@ -39,32 +39,16 @@ apiRouter.route('/confession/accept/:confession_id').get((req, res)=>{
       return;
     }
     if(confession.survey){
-      //this part is totally fucked up, i should probaby do something about it ://
-      if(confession.embed){
-        surveyController.uploadAttachment(confession.embed, function(attachment){
-          if(attachment.success){
-            req.attachment = attachment;
-            surveyController.acceptSurvey(confession, req, function(result){
-              if(!result.success){
-                surveyController.wykopLogin();
-              }
-              if(result.success)wykopController.addNotificationComment(confession, req);
-              res.json(result);
-            });
-          }
-        });
-      }else{
-        surveyController.acceptSurvey(confession, req, function(result){
-          if(!result.success){
-            surveyController.wykopLogin();
-          }
-          if(result.success)wykopController.addNotificationComment(confession, req);
-          res.json(result);
-        });
-      }
+      surveyController.acceptSurvey(confession, req.user, function(result){
+        if(!result.success){
+          surveyController.wykopLogin();
+        }
+        if(result.success)wykopController.addNotificationComment(confession, req.user);
+        res.json(result);
+      });
     }else{
-      wykopController.acceptConfession(confession, req, function(result){
-        if(result.success)wykopController.addNotificationComment(confession, req);
+      wykopController.acceptConfession(confession, req.user, function(result){
+        if(result.success)wykopController.addNotificationComment(confession, req.user);
         res.json(result);
       });
     }
@@ -124,7 +108,7 @@ apiRouter.route('/reply/accept/:reply_id').get((req, res)=>{
       res.json({success: false, response: {message: 'It\'s marked as dangerous, unmark first', status: 'danger'}});
       return;
     }
-    wykopController.acceptReply(reply, req, function(result){
+    wykopController.acceptReply(reply, req.user, function(result){
       res.json(result);
     });
   });
