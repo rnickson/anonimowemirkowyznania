@@ -1,7 +1,6 @@
 const request = require('request');
 const config = require('../config.js');
-const tagController = require('../controllers/tags.js');
-const actionController = require('../controllers/actions.js');
+const actionController = require('./actions.js');
 const surveyModel = require('../models/survey.js');
 const loginEndpoint = 'https://www.wykop.pl/zaloguj/';
 // const addEntryEndpoint = 'http://www.wykop.pl/xhr/entry/create/';
@@ -86,7 +85,7 @@ acceptSurvey = function(confession, user, cb){
       confession.entryID = entryId;
       confession.save((err)=>{
         if(err)return cb({success: false, response: {message: 'couln\'t save confession', status: 'error'}});
-        return cb({success: true, response: {message: 'Entry added: '+entryId, status: 'surveyAdded'}});
+        return cb({success: true, response: {message: 'Entry added: '+entryId, status: 'success'}});
       });
     });
   });
