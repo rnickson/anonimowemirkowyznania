@@ -1,5 +1,6 @@
 const request = require('request');
 const config = require('../config.js');
+const tagController = require('./tags.js');
 const actionController = require('./actions.js');
 const surveyModel = require('../models/survey.js');
 const loginEndpoint = 'https://www.wykop.pl/zaloguj/';
