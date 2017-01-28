@@ -29,13 +29,15 @@ block content
     each action, index in confession.actions
       a.list-group-item
         p.list-group-item-text
-        |#{action.action} #{action.time}
+        |#{action.action}
+        if action.reason
+          b  Powód: #{action.reason}
+        |  #{action.time}
   h3 Konwersacje
   ul.list-group
     if confession.conversations
       each conversation, index in confession.conversations
           li.list-group-item
-            span.badge 34
             a(href="../../conversation/#{conversation}/#{confession.auth}") #{conversation}
     else
     p Nie masz jeszcze zadnych konwersacji

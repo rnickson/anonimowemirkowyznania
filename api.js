@@ -15,6 +15,7 @@ var replyModel = require('./models/reply.js');
 mongoose.connect(config.mongoURL, (err)=>{
   if(err) throw err;
 });
+mongoose.Promise = global.Promise;
 /* api router */
 apiRouter.get('/', (req, res)=>{
   res.json({success: true, response: {message: 'API is working!'}});
@@ -54,14 +55,15 @@ apiRouter.route('/confession/accept/:confession_id').get((req, res)=>{
     }
   })
 });
-apiRouter.route('/confession/danger/:confession_id').get((req, res)=>{
+apiRouter.route('/confession/danger/:confession_id/:reason?').get((req, res)=>{
   if(!accessController(req.user.flags, 'setStatus'))return res.json({success: false, response: {message: 'You\'re not allowed to perform this action'}});
   confessionModel.findById(req.params.confession_id, (err, confession)=>{
     if(err) return res.json(err);
     confession.status==-1?confession.status=0:confession.status=-1;
     var status = confession.status==0?'warning':'danger';
     var actionType = confession.status==0?3:2;
-    actionController(confession, req.user._id, actionType);
+    var reason = req.params.reason;
+    actionController(confession, req.user._id, actionType, reason);
     confession.save((err)=>{
       if(err) return res.json({success: false, response: {message: err}});
       res.json({success: true, response: {message: 'Zaaktualizowano status', status: status}});
@@ -99,7 +101,7 @@ apiRouter.route('/confession/delete/:confession_id').get((req, res)=>{
 apiRouter.route('/reply/accept/:reply_id').get((req, res)=>{
   if(!accessController(req.user.flags, 'addReply'))return res.json({success: false, response: {message: 'You\'re not allowed to perform this action'}});
   replyModel.findById(req.params.reply_id).populate('parentID').exec((err, reply)=>{
-    if(err) return console.log(err);
+    if(err) return res.json({success: false, response: {message: err, status: 'warning'}});
     if(reply.commentID){
       res.json({success: false, response: {message: 'It\'s already added', commentID: reply.commentID, status: 'danger'}});
       return;
@@ -113,11 +115,10 @@ apiRouter.route('/reply/accept/:reply_id').get((req, res)=>{
     });
   });
 });
-apiRouter.route('/reply/danger/:reply_id').get((req, res)=>{
+apiRouter.route('/reply/danger/:reply_id/').get((req, res)=>{
   if(!accessController(req.user.flags, 'setStatus'))return res.json({success: false, response: {message: 'You\'re not allowed to perform this action'}});
   replyModel.findById(req.params.reply_id).populate('parentID').exec((err, reply)=>{
-    if(err) return console.log(err);
-    var message = '';
+    if(err) return res.json({success: false, response: {message: err, status: 'warning'}});
     reply.status==-1?reply.status=0:reply.status=-1;
     var status = reply.status==0?'warning':'danger';
     var actionType = reply.status==0?3:2;

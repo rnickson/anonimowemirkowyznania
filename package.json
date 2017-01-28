@@ -9,14 +9,14 @@
   "author": "sokytsinolop",
   "license": "MIT",
   "dependencies": {
-    "body-parser": "^1.15.0",
-    "cookie-parser": "^1.4.1",
+    "body-parser": "^1.16.0",
+    "cookie-parser": "^1.4.3",
     "crypto": "0.0.3",
-    "express": "^4.13.4",
+    "express": "^4.14.0",
     "jade": "^1.11.0",
-    "jsonwebtoken": "^7.1.9",
+    "jsonwebtoken": "^7.2.1",
     "md5": "^2.1.0",
-    "mongoose": "^4.4.6",
+    "mongoose": "^4.7.9",
     "wykop-es6": "^0.5.1"
   },
   "repository": {
