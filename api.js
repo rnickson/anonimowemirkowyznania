@@ -32,25 +32,23 @@ apiRouter.route('/confession/accept/:confession_id').get((req, res)=>{
   confessionModel.findById(req.params.confession_id).populate('survey').exec((err, confession)=>{
     if(err) return res.send(err);
     if(confession.entryID && confession.status==1){
-      res.json({success: false, response: {message: 'It\'s already added', entryID: confession.entryID, status: 'danger'}});
-      return;
+      return res.json({success: false, response: {message: 'It\'s already added', entryID: confession.entryID, status: 'danger'}});
     }
     if(confession.status == -1){
-      res.json({success: false, response: {message: 'It\'s marked as dangerous, unmark first', status: 'danger'}});
-      return;
+      return res.json({success: false, response: {message: 'It\'s marked as dangerous, unmark first', status: 'danger'}});
     }
     if(confession.survey){
       surveyController.acceptSurvey(confession, req.user, function(result){
-        if(!result.success){
+        if(!result.success&&result.relogin){
           surveyController.wykopLogin();
         }
         if(result.success)wykopController.addNotificationComment(confession, req.user);
-        res.json(result);
+        return res.json(result);
       });
     }else{
       wykopController.acceptConfession(confession, req.user, function(result){
         if(result.success)wykopController.addNotificationComment(confession, req.user);
-        res.json(result);
+        return res.json(result);
       });
     }
   })

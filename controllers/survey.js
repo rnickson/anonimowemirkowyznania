@@ -12,7 +12,7 @@ const idRegex = /data-id=\\"(\d{8})\\"/;
 const hashRegex = /"([a-f0-9]{32}-\d{10})"/
 const embedHashRegex = /"hash":"([A-Za-z0-9]{32})/;
 const wykopSession = request.jar();
-var hash
+var hash;
 validateSurvey = function(survey){
   if(survey.question.length < 5){
     return {success: false, response: {message: 'Pytanie jest za krotkie.'}}
@@ -71,14 +71,17 @@ acceptSurvey = function(confession, user, cb){
   var entryBody = `#anonimowemirkowyznania \n${confession.text}\n\n [Kliknij tutaj, aby odpowiedzieć w tym wątku anonimowo](${config.siteURL}/reply/${confession._id}) \n[Kliknij tutaj, aby wysłać OPowi anonimową wiadomość prywatną](${config.siteURL}/conversation/${confession._id}/new) \nPost dodany za pomocą skryptu AnonimoweMirkoWyznania ( ${config.siteURL} ) Zaakceptował: ${user.username}`;
   uploadAttachment(confession.embed, (result)=>{
     if(!result.success)return cb({success: false, response: {message: 'couln\'t upload attachment', status: 'error'}});
-    var data = {body: tagController.trimTags(entryBody, confession.tags), 'survey[answers]':confession.survey.answers, 'survey[question]': confession.survey.question};
+    //its required for some reason, otherwise CALL_AND_RETRY_LAST Allocation failed - JavaScript heap out of memory
+    var answers = confession.survey.answers.map((v)=>{return v;});
+    var data = {body: tagController.trimTags(entryBody, confession.tags), 'survey[question]': confession.survey.question, 'survey[answers]': answers};
     if(result.hash)data.attachment = result.hash;
     request({method:'POST', url: addEntryEndpoint+hash, form: data, jar:wykopSession}, function(err, response, body){
       if(err)return cb({success: false, response: {message: 'Wykop umar', status: 'error'}});
+      if(!(body.substr(0,8)=='for(;;);'))return cb({success: false, relogin: true, response:{message:'Session expired, reloging'}});
       try {
         var entryId = body.match(idRegex)[1];
       } catch (e) {
-        return cb({success: false, response: {message: 'Renewing cookies, please try again in 10 seconds.', status: 'error'}})
+        return cb({success: false, response: {message: body.substr(0,8), status: 'error'}})
       }
       actionController(confession, user._id, 1);
       confession.status = 1;
@@ -102,6 +105,7 @@ uploadAttachment = function(url, cb){
     return cb({success:true, hash: hash});
   });
 }
+// wykopLogin();
 module.exports = {
     validateSurvey, saveSurvey, acceptSurvey, wykopLogin
 };
