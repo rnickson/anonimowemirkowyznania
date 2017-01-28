@@ -74,7 +74,7 @@ acceptSurvey = function(confession, user, cb){
     //its required for some reason, otherwise CALL_AND_RETRY_LAST Allocation failed - JavaScript heap out of memory
     var answers = confession.survey.answers.map((v)=>{return v;});
     var data = {body: tagController.trimTags(entryBody, confession.tags), 'survey[question]': confession.survey.question, 'survey[answers]': answers};
-    if(result.hash)data.attachment = result.hash;
+    data.attachment = result.hash||undefined;
     request({method:'POST', url: addEntryEndpoint+hash, form: data, jar:wykopSession}, function(err, response, body){
       if(err)return cb({success: false, response: {message: 'Wykop umar', status: 'error'}});
       if(!(body.substr(0,8)=='for(;;);'))return cb({success: false, relogin: true, response:{message:'Session expired, reloging'}});
