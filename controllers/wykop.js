@@ -83,7 +83,7 @@ acceptConfession = function(confession, user, cb){
 }
 addNotificationComment = function(confession, user, cb){
   cb=cb||function(){};
-  wykop.request('Entries', 'AddComment', {params: [confession.entryID], post: {body: `Zaplusuj ten komentarz, aby otrzymywać powiadomienia o odpowiedziach w tym wątku. [Kliknij tutaj, jeśli chcesz skopiować listę obserwujących](${config.siteURL}/followers/${confession._id})\n Wspomóż mirkowyznania i wykup reklamę w tym miejscu reklama@${config.siteURL}`}}, (err, notificationComment)=>{
+wykop.request('Entries', 'AddComment', {params: [confession.entryID], post: {body: `Zaplusuj ten komentarz, aby otrzymywać powiadomienia o odpowiedziach w tym wątku. [Kliknij tutaj, jeśli chcesz skopiować listę obserwujących](${config.siteURL}/followers/${confession._id})\n Wspomóż mirkowyznania i wykup reklamę w tym miejscu reklama@${config.siteURL.substr(8)}`}}, (err, notificationComment)=>
     if(err) return cb({success: false, response: {message: err, status: 'error'}});
     confession.notificationCommentId = notificationComment.id;
     actionController(confession, user._id, 6);

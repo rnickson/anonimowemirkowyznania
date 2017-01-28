@@ -11,12 +11,15 @@ var actionTypes = {
   8: 'Zaakceptowano nową odpowiedź',
   9: 'Zmodyfikowano tagi wpisu'
 }
-function createAction(confession, userId, actionType){
+function createAction(confession, userId, actionType, reason){
   var action = new actionModel();
   action.action = actionTypes[actionType];
   action.user = userId;
   action.time = new Date();
   action.type = actionType;
+  if(reason){
+    action.reason = reason;
+  }
   action.save((err, action)=>{
     if(err)return;
     confession.actions.push(action._id);

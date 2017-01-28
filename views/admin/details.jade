@@ -14,6 +14,8 @@ block content
                 span.label.label-small.label-danger.actionButton(style="margin-left: 1em;")&attributes({'data-action':'danger', 'data-id':confession.id, 'data-object':'confession'}) Nieodpowiednia
               else
                 span.label.label-big.label-danger.actionButton(style="margin-left: 1em;")&attributes({'data-action':'delete', 'data-id':confession.id, 'data-object':'confession'}) Usuń z mikrobloga!
+              a(href="../../conversation/#{confession._id}/new")
+                span.label.label-small.label-info(style="margin-left: 1em;") Wyślij wiadomość prywatną
           .panel-body(style='white-space:pre-wrap;')
             |#{confession.text}
             hr
@@ -43,8 +45,10 @@ block content
                     h4.list-group-item-heading A:#{index} T:#{action.type}
                     p.list-group-item-text
                     |#{action.action}
+                    if action.reason
+                      b  Powód: #{action.reason}
                     if action.user
-                      | przez
+                      |  przez
                       em  #{action.user.username}
                     |  #{action.time}
               h4 Wyznania dodane z tego IP:

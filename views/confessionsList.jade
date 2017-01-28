@@ -4,11 +4,14 @@ block content
     |Na tej stronie mozesz przejrzec wyznania dodane przez Ciebie. Znajdziesz tutaj wszystkie potrzebne infomacje.
     b
       |Wyznania zapisane są w pamięci twojej przeglądarki. Mozesz je
-      a(onclick="exportConfessions()").
-        wyeksportowac
-      |i
-      a(onclick="importConfessions()").
-        zaimportowac.
+      a(onclick="exportConfessions()")
+        |  wyeksportowac
+      |  i
+      a(onclick="importConfessions()")
+        |  zaimportowac
+      |  albo
+      a(onclick="clearConfessions()")
+        |  wyczyścić wszystkie.
   table.table.table-bordered.table-striped
     thead
       tr
@@ -31,5 +34,9 @@ block script
     function importConfessions(){
       var data = prompt('Wklej wyeksporotwany ciag znakow', '');
       if(data)localStorage.setItem('confessions', data);
+      location.reload();
+    }
+    function clearConfessions(){
+      localStorage.setItem('confessions', '{}');
       location.reload();
     }

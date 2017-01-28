@@ -22,9 +22,13 @@ $('.actionButton').click(function(){
   if(obj.data("action")=='tags'){
     endpoint+=`/${obj.data("tag")}`
   }
+  if(obj.data('action')=='danger'&&obj.data('object')=='confession'&&parent.hasClass('warning')){
+    var reason = prompt("Wpisz powód odrzucenia wyznania (możesz zostawić puste)");
+    endpoint+='/'+reason;
+  }
   $.ajax({
       type: "GET",
-      url: endpoint
+      url: endpoint,
   })
   .done(function( response ) {
       if(obj.data("action")=='tags'){
