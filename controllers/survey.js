@@ -73,15 +73,14 @@ acceptSurvey = function(confession, user, cb){
     if(!result.success)return cb({success: false, response: {message: 'couln\'t upload attachment', status: 'error'}});
     //its required for some reason, otherwise CALL_AND_RETRY_LAST Allocation failed - JavaScript heap out of memory
     var answers = confession.survey.answers.map((v)=>{return v;});
-    var data = {body: tagController.trimTags(entryBody, confession.tags), 'survey[question]': confession.survey.question, 'survey[answers]': answers};
-    data.attachment = result.hash||undefined;
+    var data = {body: tagController.trimTags(entryBody, confession.tags), attachment: result.hash, 'survey[question]': confession.survey.question, 'survey[answers]': answers};
     request({method:'POST', url: addEntryEndpoint+hash, form: data, jar:wykopSession}, function(err, response, body){
       if(err)return cb({success: false, response: {message: 'Wykop umar', status: 'error'}});
       if(!(body.substr(0,8)=='for(;;);'))return cb({success: false, relogin: true, response:{message:'Session expired, reloging'}});
       try {
         var entryId = body.match(idRegex)[1];
       } catch (e) {
-        return cb({success: false, response: {message: body.substr(0,8), status: 'error'}})
+        return cb({success: false, response: {message: body, status: 'error'}})
       }
       actionController(confession, user._id, 1);
       confession.status = 1;
@@ -95,8 +94,9 @@ acceptSurvey = function(confession, user, cb){
   });
 }
 uploadAttachment = function(url, cb){
-  if(!url)return cb({success: true, hash: false});
+  if(!url)return cb({success: true, hash: null});
   request({method: 'POST', url: uploadAttachmentEndpoint+hash, form: {url}}, function(err, response, body){
+    if(err)return cb({success: false});
     try {
       var hash = body.match(embedHashRegex)[1];
     } catch (e) {
@@ -105,7 +105,7 @@ uploadAttachment = function(url, cb){
     return cb({success:true, hash: hash});
   });
 }
-// wykopLogin();
+wykopLogin();
 module.exports = {
     validateSurvey, saveSurvey, acceptSurvey, wykopLogin
 };
