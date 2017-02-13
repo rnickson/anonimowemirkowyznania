@@ -40,6 +40,7 @@ function onMessage(ws, message) {
   switch (message.type) {
     case 'chatMsg':
       var time = new Date();
+      if(message.msg.length>1024){return ws.send(JSON.stringify({type: 'alert', body: 'Wiadomość za długa.'}));}
       if((time - ws.lastMsg) < 1000)return ws.send(JSON.stringify({type: 'alert', body: 'Wysyłasz wiadomości za szybko.'}));
       ws.lastMsg = time;
       conversationController.newMessage(ws.conversation, ws.auth, message.msg, (err, isOP)=>{

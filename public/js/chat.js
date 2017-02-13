@@ -1,4 +1,4 @@
-var ws = new WebSocket(`ws://localhost:8080/?conversation=${conversationId}&auth=${authCode}`);
+var ws = new WebSocket(`ws://localhost:8090/?conversation=${conversationId}&auth=${authCode}`);
 ws.onopen = function(){
   ws.onmessage = handleMessage;
 }
@@ -16,6 +16,7 @@ handleMessage = function(message){
 sendMessage = function(msg){
   msg = msg.trim();
   if(!msg)return alert('Wpisz wiadomość');
+  if(msg.length>1024)return alert('Wiadomość jest za długa');
   ws.send(JSON.stringify({type: 'chatMsg', msg: msg}));
   $("#messageBox").val('');
 }

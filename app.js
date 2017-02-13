@@ -20,7 +20,11 @@ var aliasGenerator = require('./controllers/aliases.js');
 var surveyController = require('./controllers/survey.js');
 var crypto = require('crypto');
 const wss = require('./controllers/wsServer.js');
-const _port = 1337;
+var _port = 1337;
+if (typeof(PhusionPassenger) !== 'undefined') {
+    PhusionPassenger.configure({ autoInstall: false });
+    _port = 'passenger';
+}
 app.enable('trust proxy');
 
 app.use(bodyParser.urlencoded({ extended: true }));
