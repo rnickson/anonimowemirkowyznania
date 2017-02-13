@@ -19,12 +19,13 @@ var tagController = require('./controllers/tags.js');
 var aliasGenerator = require('./controllers/aliases.js');
 var surveyController = require('./controllers/survey.js');
 var crypto = require('crypto');
-const wss = require('./controllers/wsServer.js');
 var _port = 1337;
 if (typeof(PhusionPassenger) !== 'undefined') {
     PhusionPassenger.configure({ autoInstall: false });
     _port = 'passenger';
 }
+//wss server must be required after we tell Passenger that the app is binding 2 ports.
+const wss = require('./controllers/wsServer.js');
 app.enable('trust proxy');
 
 app.use(bodyParser.urlencoded({ extended: true }));
