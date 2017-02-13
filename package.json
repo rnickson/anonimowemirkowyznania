@@ -19,6 +19,7 @@
     "md5": "^2.1.0",
     "mongoose": "^4.7.9",
     "request": "^2.79.0",
+    "uws": "^0.12.0",
     "wykop-es6": "^0.5.1"
   },
   "repository": {

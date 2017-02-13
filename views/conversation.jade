@@ -1,23 +1,33 @@
 extends ./base.jade
 block content
-  .col-lg-8
-    .panel-body
-    |Koniecznie dodajcie tę stronę do zakładek, aby pozostać w kontakcie!
-    if conversation
-        ul.chat
-          each message, index in conversation.messages
-            -var nickname = (message.OP ? 'OP' : 'Uzytkownik mikrobloga')
-            -var color = (message.OP ? 'FA6F57' : '55C1E7')
-            li.left.clearfix.list-unstyled
-              span.chat-img.pull-left
-                img.img-circle(src="http://placehold.it/50/#{color}/fff&text=#{nickname}")
-              .chat-body.clearfix
-                .header
-                  strong.primary-font #{nickname}
-                  small.text-muted.pull-right #{message.time}
-                p
-                |#{message.text}
-              hr
-      form(method="post")
-        input.form-control(type="text", name="text", placeholder="Wpisz tutaj swoja wiadomosc")
-        button.btn.btn-large.btn-success(type="submit") Wyślij
+  style.
+    .message-bubble{padding:10px 0;word-wrap: break-word}.message-bubble.operator{background-color:#F5F5F5}.time{text-align:right;display:inline}.message-bubble>*{padding-left:10px}.panel-body{padding:0}.panel-heading{background-color:#3d6da7!important;color:#fff!important}
+    /*chat snipped from http://bootsnipp.com/snippets/40W9n thx mtownsen*/
+  .container
+    .row
+      .panel.panel-default
+        .panel-heading Konwersacja
+        .panel-body
+          if conversation
+            .container#messages
+              each message, index in conversation.messages
+                -var nickname = (message.OP ? 'OP' : 'Uzytkownik mikrobloga')
+                .row.message-bubble(class=message.OP?'operator':'')
+                  // span.time #{message.time}
+                  p.text-muted #{nickname}
+                  span #{message.text}
+            .panel-footer
+              .input-group
+                input#messageBox.form-control(type='text')
+                span.input-group-btn
+                  button.btn.btn-default.sendMessage(type='button' autocomplete="off") Wyślij
+          else
+            form(method="post")
+              input.form-control(type="text", name="text", placeholder="Wpisz tutaj swoja wiadomosc", autocomplete="off")
+              button.btn.btn-large.btn-success(type="submit") Wyślij
+block script
+  if conversation
+    script(type="text/javascript").
+      const conversationId = '#{conversation._id}';
+      const authCode = '#{conversation.parentID.auth}';
+    script(src=siteURL+"/js/chat.js" type="text/javascript")

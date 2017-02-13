@@ -11,24 +11,31 @@ var conversationController = {
       });
     });
   },
-  getConversation: function(conversationId, auth, authRequired, cb){
+  validateAuth: function(conversationId, auth, cb){
+    conversationModel.findOne({_id: conversationId}).populate('parentID', 'auth').exec((err, conversation)=>{
+      if(err)return cb(err);
+      if(!conversation)return cb('nie odnaleziono konwersacji');
+      if(conversation.parentID.auth == auth)return cb(null, true);
+      cb(null, false);
+    });
+  },
+  getConversation: function(conversationId, auth, cb){
     conversationModel.findOne({_id: conversationId}).populate('parentID', 'auth').exec((err, conversation)=>{
       if(err) return cb(err);
       if(!conversation) return cb('nie odnaleziono konwersacji');
-      if(authRequired?auth==conversation.parentID.auth?true:false:true)return cb(err, conversation);
-      return cb('auth code doesn\'t match');
+      if(auth!==conversation.parentID.auth){conversation.parentID.auth = '';};
+      return cb(err, conversation);
   });
   },
   newMessage: function(conversationId, auth, text, cb){
-    conversationModel.findOne({_id: conversationId}).populate('parentID', 'auth').exec((err, conversation)=>{
+    conversationModel.findOne({_id: conversationId}, {"_id": 1, "parentID": 1}).populate('parentID', 'auth').exec((err, conversation)=>{
       if(err) return cb(err);
       if(!text) return cb('wpisz tresc wiadomosci');
       if(!conversation) return cb('nie odnaleziono konwersacji');
-      if(conversation.messages.length&&conversation.messages[conversation.messages.length-1].text==text)return cb(null);
-      conversation.messages.push({time: new Date(), text: text, OP:auth==conversation.parentID.auth?true:false});
-      conversation.save((err)=>{
+      isOP = auth==conversation.parentID.auth?true:false;
+      conversationModel.findByIdAndUpdate(conversationId, {$push: {messages: {time: new Date(), text: text, OP:isOP}}}, {}, (err)=>{
         if(err) return cb(err);
-        cb(null);
+        cb(null, isOP);
       });
   });
   }

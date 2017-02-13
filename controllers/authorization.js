@@ -1,6 +1,5 @@
 var jwt = require('jsonwebtoken');
 var config = require('../config.js');
-var mongoose = require('mongoose');
 var userModel = require('../models/user.js');
 module.exports = function(req, res, next){
     var token = req.cookies.token || req.body.token || req.query.token || req.headers['x-access-token'];

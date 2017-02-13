@@ -19,7 +19,7 @@ var tagController = require('./controllers/tags.js');
 var aliasGenerator = require('./controllers/aliases.js');
 var surveyController = require('./controllers/survey.js');
 var crypto = require('crypto');
-
+const wss = require('./controllers/wsServer.js');
 const _port = 1337;
 app.enable('trust proxy');
 
