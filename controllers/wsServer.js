@@ -1,8 +1,7 @@
 const WebSocketServer = require('uws').Server;
 const url = require('url');
 var conversationController = require('./conversations.js');
-const app = require('../app.js');
-var wss = new WebSocketServer({server: app, port: 8090});
+var wss = new WebSocketServer({port: 8090});
 var entityMap = {
   "&": "&amp;",
   "<": "&lt;",
