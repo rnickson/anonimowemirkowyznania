@@ -1,4 +1,4 @@
-var ws = new WebSocket(`ws://localhost:8090/?conversation=${conversationId}&auth=${authCode}`);
+var ws = new WebSocket(`wss://mirkowyznania.eu:1030/?conversation=${conversationId}&auth=${authCode}`);
 ws.onopen = function(){
   ws.onmessage = handleMessage;
 }

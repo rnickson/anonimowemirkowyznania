@@ -1,7 +1,17 @@
 const WebSocketServer = require('uws').Server;
 const url = require('url');
+const fs = require('fs');
+const https = require('https');
 var conversationController = require('./conversations.js');
-var wss = new WebSocketServer({port: 8090});
+var options = {}
+if(fs.existsSync('./certs/certificate.crt') && fs.existsSync('./certs/private.key')){
+  const options = {
+  	key: fs.readFileSync('./certs/certificate.crt'),
+    cert: fs.readFileSync('./certs/private.key')
+  };
+}
+const httpsServer = https.createServer(options, (req, res)=>{});
+var wss = new WebSocketServer({server: httpsServer, port: 1030});
 var entityMap = {
   "&": "&amp;",
   "<": "&lt;",
