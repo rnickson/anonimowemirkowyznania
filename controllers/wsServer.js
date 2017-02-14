@@ -3,11 +3,11 @@ const url = require('url');
 const fs = require('fs');
 const https = require('https');
 var conversationController = require('./conversations.js');
-var options = {}
-if(fs.existsSync('./certs/certificate.crt') && fs.existsSync('./certs/private.key')){
-  const options = {
-  	key: fs.readFileSync('./certs/certificate.crt'),
-    cert: fs.readFileSync('./certs/private.key')
+var options = {};
+if (fs.existsSync('./certs')) {
+  options = {
+  	key: fs.readFileSync('./certs/key.pem'),
+    cert: fs.readFileSync('./certs/cert.pem')
   };
 }
 const httpsServer = https.createServer(options, (req, res)=>{});
