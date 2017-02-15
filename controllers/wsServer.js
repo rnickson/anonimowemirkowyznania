@@ -27,7 +27,7 @@ function escapeHtml(string) {
 }
 WebSocketServer.broadcast = function broadcast(data) {
   wss.clients.forEach(function each(client) {
-    if (client.readyState === WebSocketServer.OPEN) {
+    if (client.readyState === 1) {
       client.send(data);
     }
   });
