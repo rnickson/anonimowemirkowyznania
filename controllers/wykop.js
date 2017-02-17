@@ -101,7 +101,10 @@ acceptReply = function(reply, user, cb){
     if(err)return cb({success: false, response:{message:JSON.stringify(err)}});
     if(followers.length > 0)entryBody+=`\n! Wołam obserwujących: ${followers.map(function(f){return '@'+f;}).join(', ')}`;
     wykop.request('Entries', 'AddComment', {params: [reply.parentID.entryID], post: {body: entryBody, embed: reply.embed}}, (err, response)=>{
-      if(err) return cb({success: false, response: {message: JSON.stringify(err), status: 'warning'}});
+      if(err){
+        if(err.code === 11 || err.code === 12 || err.code === 13)wykop.relogin();
+        return cb({success: false, response: {message: JSON.stringify(err), status: 'warning'}});
+      }
       reply.commentID = response.id;
       reply.status = 1;
       reply.addedBy = user.username;

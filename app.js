@@ -27,7 +27,6 @@ if (typeof(PhusionPassenger) !== 'undefined') {
 //wss server must be required after we tell Passenger that the app is binding 2 ports.
 const wss = require('./controllers/wsServer.js');
 app.enable('trust proxy');
-
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
