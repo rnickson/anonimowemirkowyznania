@@ -1,3 +1,4 @@
+var config = require('../config.js');
 var wykop = require('../wykop.js');
 var tagController = require('../controllers/tags.js');
 var actionController = require('../controllers/actions.js');
@@ -65,7 +66,10 @@ acceptConfession = function(confession, user, cb){
   var entryBody = `#anonimowemirkowyznania \n${confession.text}\n\n [Kliknij tutaj, aby odpowiedzieć w tym wątku anonimowo](${config.siteURL}/reply/${confession._id}) \n[Kliknij tutaj, aby wysłać OPowi anonimową wiadomość prywatną](${config.siteURL}/conversation/${confession._id}/new) \nPost dodany za pomocą skryptu AnonimoweMirkoWyznania ( ${config.siteURL} ) Zaakceptował: ${user.username}`;
   wykop.request('Entries', 'Add', {post: {body: tagController.trimTags(entryBody, confession.tags), embed: confession.embed}}, (err, response)=>{
     if(err){
-      if(err.error.code === 11 || err.error.code === 12 || err.error.code === 13)wykop.relogin();
+      console.log(err);
+      if(err.error.code === 11 || err.error.code === 12 || err.error.code === 13){
+        wykop.login(config.wykop.connection);
+      }
       return cb({success: false, response: {message: JSON.stringify(err), status: 'warning'}});
     }
     confession.entryID = response.id;
