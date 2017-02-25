@@ -7,7 +7,7 @@ const tagController = {
    trimTags: function(string, toTrim){
      for (var i in toTrim) {
        if(toTrim[i][1]==0){
-         string = string.replace(toTrim[i][0], '⫵'+toTrim[i][0].slice(1));
+         string = string.replace(toTrim[i][0], '♯'+toTrim[i][0].slice(1));
        }
      }
      return string;
