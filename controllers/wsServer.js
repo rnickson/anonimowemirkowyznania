@@ -1,4 +1,4 @@
-const WebSocketServer = require('uws').Server;
+const WebSocketServer = require('ws').Server;
 const url = require('url');
 const fs = require('fs');
 const https = require('https');
@@ -6,8 +6,8 @@ var conversationController = require('./conversations.js');
 var options = {};
 if (fs.existsSync('./certs')) {
   options = {
-  	key: fs.readFileSync('./certs/key.pem'),
-    cert: fs.readFileSync('./certs/cert.pem')
+  	key: fs.readFileSync('./certs/privatekey.key'),
+    cert: fs.readFileSync('./certs/certificate.crt')
   };
 }
 const httpsServer = https.createServer(options, (req, res)=>{});
@@ -39,7 +39,6 @@ WebSocketServer.sendToChannel = function broadcast(channel, data) {
     }
   });
 };
-
 function onMessage(ws, message) {
   try {
     message = JSON.parse(message);
@@ -53,7 +52,7 @@ function onMessage(ws, message) {
       if(message.msg.length>1024){return ws.send(JSON.stringify({type: 'alert', body: 'Wiadomość za długa.'}));}
       if((time - ws.lastMsg) < 1000)return ws.send(JSON.stringify({type: 'alert', body: 'Wysyłasz wiadomości za szybko.'}));
       ws.lastMsg = time;
-      conversationController.newMessage(ws.conversation, ws.auth, message.msg, (err, isOP)=>{
+      conversationController.newMessage(ws.conversation, ws.auth, message.msg, ws.IPAdress, (err, isOP)=>{
         if(err)return ws.send(JSON.stringify({type:'alert', body: err}));
         WebSocketServer.sendToChannel(ws.conversation, JSON.stringify({type:'newMessage', msg: message.msg, username:isOP?'OP':'Użytkownik mikrobloga'}));
       });
@@ -67,6 +66,7 @@ wss.on('connection', function(ws){
   var params = url_parts.query;
   ws.conversation = params.conversation;
   ws.auth = params.auth;
+  ws.IPAdress = ws._socket.remoteAddress;
   conversationController.validateAuth(params.conversation, params.auth, (err, result)=>{
     if(err)ws.send({type: 'alert', body: err});
     if(result)ws.authorized = true;

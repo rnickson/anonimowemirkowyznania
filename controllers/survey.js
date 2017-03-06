@@ -80,7 +80,9 @@ acceptSurvey = function(confession, user, cb){
       try {
         var entryId = body.match(idRegex)[1];
       } catch (e) {
-        return cb({success: false, response: {message: body, status: 'error'}})
+        let flag;
+        (body.search('Sesja')>-1)?flag=true:flag=false;
+        return cb({success: false, relogin: flag, response: {message: body, status: 'error'}})
       }
       actionController(confession, user._id, 1);
       confession.status = 1;

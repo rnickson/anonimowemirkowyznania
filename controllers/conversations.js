@@ -27,13 +27,13 @@ var conversationController = {
       return cb(err, conversation);
   });
   },
-  newMessage: function(conversationId, auth, text, cb){
+  newMessage: function(conversationId, auth, text, IPAdress, cb){
     conversationModel.findOne({_id: conversationId}, {"_id": 1, "parentID": 1}).populate('parentID', 'auth').exec((err, conversation)=>{
       if(err) return cb(err);
       if(!text) return cb('wpisz tresc wiadomosci');
       if(!conversation) return cb('nie odnaleziono konwersacji');
       isOP = auth==conversation.parentID.auth?true:false;
-      conversationModel.findByIdAndUpdate(conversationId, {$push: {messages: {time: new Date(), text: text, OP:isOP}}}, {}, (err)=>{
+      conversationModel.findByIdAndUpdate(conversationId, {$push: {messages: {time: new Date(), text: text, IPAdress: IPAdress, OP:isOP}}}, {}, (err)=>{
         if(err) return cb(err);
         cb(null, isOP);
       });

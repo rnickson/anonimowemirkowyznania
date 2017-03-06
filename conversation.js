@@ -15,7 +15,7 @@ conversationRouter.post('/:confessionid/new', (req, res)=>{
     if(req.body.text){
       conversationController.createNewConversation(confession, (err, conversationid)=>{
         if(err) return res.sendStatus(500);
-        conversationController.newMessage(conversationid, null, req.body.text, (err)=>{
+        conversationController.newMessage(conversationid, null, req.body.text, req.ip, (err)=>{
           if(err)return res.send(err);
           return res.redirect(`/conversation/${conversationid}`);
         });
@@ -36,7 +36,7 @@ conversationRouter.post('/:conversationid/:auth?', (req, res)=>{
   if(!req.params.conversationid){
     return res.sendStatus(400);
   }
-  conversationController.newMessage(req.params.conversationid, req.params.auth, req.body.text, (err, isOP)=>{
+  conversationController.newMessage(req.params.conversationid, req.params.auth, req.body.text, req.ip, (err, isOP)=>{
     if(err)return res.send(err);
     conversationController.getConversation(req.params.conversationid, req.params.auth, (err, conversation)=>{
       if(err) return res.send(err);
