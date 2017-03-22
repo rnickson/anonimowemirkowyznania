@@ -8,26 +8,25 @@ block content
       .panel.panel-default
         .panel-heading Konwersacja
         .panel-body
-          if conversation
-            .container#messages
-              each message, index in conversation.messages
-                -var nickname = (message.OP ? 'OP' : 'Uzytkownik mikrobloga')
-                .row.message-bubble(class=message.OP?'operator':'')
-                  // span.time #{message.time}
-                  p.text-muted #{nickname}
-                  span #{message.text}
-            .panel-footer
-              .input-group
-                input#messageBox.form-control(type='text')
+          .container#messages
+            each message, index in conversation.messages
+              -var nickname = (message.OP ? 'OP' : 'Uzytkownik mikrobloga')
+              .row.message-bubble(class=message.OP?'operator':'')
+                // span.time #{message.time}
+                p.text-muted #{nickname}
+                span #{message.text}
+          .panel-footer
+            .input-group
+              form(id="messageForm" method="post")
+                input#messageBox.form-control(type='text', name='text')
                 span.input-group-btn
-                  button.btn.btn-default.sendMessage(type='button' autocomplete="off") Wyślij
-          else
-            form(method="post")
-              input.form-control(type="text", name="text", placeholder="Wpisz tutaj swoja wiadomosc", autocomplete="off")
-              button.btn.btn-large.btn-success(type="submit") Wyślij
+                  button.btn.btn-default.sendMessage(type='submit' autocomplete="off") Wyślij
 block script
   if conversation
     script(type="text/javascript").
+      document.getElementById("messageForm").addEventListener("submit", function(event){
+      event.preventDefault();
+      });
       const conversationId = '#{conversation._id}';
       const authCode = '#{conversation.parentID.auth}';
     script(src=siteURL+"/js/chat.js" type="text/javascript")
