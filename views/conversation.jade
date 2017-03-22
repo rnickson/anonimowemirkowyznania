@@ -9,15 +9,15 @@ block content
         .panel-heading Konwersacja
         .panel-body
           .container#messages
-            each message, index in conversation.messages
-              -var nickname = (message.OP ? 'OP' : 'Uzytkownik mikrobloga')
-              .row.message-bubble(class=message.OP?'operator':'')
-                // span.time #{message.time}
-                p.text-muted #{nickname}
-                span #{message.text}
-          .panel-footer
-            .input-group
-              form(id="messageForm" method="post")
+            if conversation
+              each message, index in conversation.messages
+                -var nickname = (message.OP ? 'OP' : 'Uzytkownik mikrobloga')
+                .row.message-bubble(class=message.OP?'operator':'')
+                  // span.time #{message.time}
+                  p.text-muted #{nickname}
+                  span #{message.text}
+            form(id="messageForm" method="post")
+              .input-group
                 input#messageBox.form-control(type='text', name='text')
                 span.input-group-btn
                   button.btn.btn-default.sendMessage(type='submit' autocomplete="off") Wyślij
