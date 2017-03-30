@@ -80,7 +80,7 @@ acceptSurvey = function(confession, user, cb){
       try {
         var entryId = body.match(idRegex)[1];
       } catch (e) {
-        let flag;
+        var flag;
         (body.search('Sesja')>-1)?flag=true:flag=false;
         return cb({success: false, relogin: flag, response: {message: body, status: 'error'}})
       }

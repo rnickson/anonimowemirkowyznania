@@ -1,4 +1,4 @@
-const WebSocketServer = require('ws').Server;
+const WebSocketServer = require('uws').Server;
 const url = require('url');
 const fs = require('fs');
 const https = require('https');
@@ -6,25 +6,12 @@ var conversationController = require('./conversations.js');
 var options = {};
 if (fs.existsSync('./certs')) {
   options = {
-  	key: fs.readFileSync('./certs/privatekey.key'),
+    key: fs.readFileSync('./certs/privatekey.key'),
     cert: fs.readFileSync('./certs/certificate.crt')
   };
 }
 const httpsServer = https.createServer(options, (req, res)=>{});
 var wss = new WebSocketServer({server: httpsServer, port: 1030});
-var entityMap = {
-  "&": "&amp;",
-  "<": "&lt;",
-  ">": "&gt;",
-  '"': '&quot;',
-  "'": '&#39;',
-  "/": '&#x2F;'
-};
-function escapeHtml(string) {
-  return String(string).replace(/[&<>"'\/]/g, function (s) {
-  return entityMap[s];
-  });
-}
 WebSocketServer.broadcast = function broadcast(data) {
   wss.clients.forEach(function each(client) {
     if (client.readyState === 1) {
@@ -45,7 +32,6 @@ function onMessage(ws, message) {
   } catch (e) {
     return ws.send(JSON.stringify({type:'alert', body: 'Coś popsułeś.'}));
   }
-  message.msg = escapeHtml(message.msg);
   switch (message.type) {
     case 'chatMsg':
       var time = new Date();

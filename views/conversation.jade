@@ -1,5 +1,7 @@
 extends ./base.jade
 block content
+  .alert.alert-warning
+    |Aby zachować dostęp do tej konwersacji koniecznie zapisz jej adres (OPowi wyznania link do każdej z konwersacji wyświetla się na stronie podsumowania wyznania)
   style.
     .message-bubble{padding:10px 0;word-wrap: break-word}.message-bubble.operator{background-color:#F5F5F5}.time{text-align:right;display:inline}.message-bubble>*{padding-left:10px}.panel-body{padding:0}.panel-heading{background-color:#3d6da7!important;color:#fff!important}
     /*chat snipped from http://bootsnipp.com/snippets/40W9n thx mtownsen*/
@@ -16,11 +18,11 @@ block content
                   // span.time #{message.time}
                   p.text-muted #{nickname}
                   span #{message.text}
-            form(id="messageForm" method="post")
-              .input-group
-                input#messageBox.form-control(type='text', name='text')
-                span.input-group-btn
-                  button.btn.btn-default.sendMessage(type='submit' autocomplete="off") Wyślij
+          form(id="messageForm" method="post")
+            .input-group
+              input#messageBox.form-control(type='text', name='text')
+              span.input-group-btn
+                button.btn.btn-default.sendMessage(type='submit' autocomplete="off") Wyślij
 block script
   if conversation
     script(type="text/javascript").

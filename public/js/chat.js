@@ -1,4 +1,17 @@
-var ws = new WebSocket(`wss://mirkowyznania.eu:1030/?conversation=${conversationId}&auth=${authCode}`);
+var ws = new WebSocket(`wss://localhost:1030/?conversation=${conversationId}&auth=${authCode}`);
+var entityMap = {
+  "&": "&amp;",
+  "<": "&lt;",
+  ">": "&gt;",
+  '"': '&quot;',
+  "'": '&#39;',
+  "/": '&#x2F;'
+};
+function escapeHtml(string) {
+  return String(string).replace(/[&<>"'\/]/g, function (s) {
+  return entityMap[s];
+  });
+}
 ws.onopen = function(){
   ws.onmessage = handleMessage;
 }
@@ -6,6 +19,7 @@ handleMessage = function(message){
   var message = JSON.parse(message.data);
   switch (message.type) {
     case 'newMessage':
+      message.msg = escapeHtml(message.msg);
       var html = `<div class=\"row message-bubble ${message.username=='OP'?'operator':''}\"><p class=\"text-muted\">${message.username}</p><span>${message.msg}</span></div>`;
       $('#messages').append(html);
       break;

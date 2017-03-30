@@ -19,6 +19,8 @@ var tagController = require('./controllers/tags.js');
 var aliasGenerator = require('./controllers/aliases.js');
 var surveyController = require('./controllers/survey.js');
 var crypto = require('crypto');
+var https = require('https');
+const fs = require('fs');
 var _port = 1337;
 if (typeof(PhusionPassenger) !== 'undefined') {
     PhusionPassenger.configure({ autoInstall: false });
@@ -26,6 +28,13 @@ if (typeof(PhusionPassenger) !== 'undefined') {
 }
 //wss server must be required after we tell Passenger that the app is binding 2 ports.
 const wss = require('./controllers/wsServer.js');
+var options = {};
+if (fs.existsSync('./certs')) {
+  options = {
+    key: fs.readFileSync('./certs/privatekey.key'),
+    cert: fs.readFileSync('./certs/certificate.crt')
+  };
+}
 app.enable('trust proxy');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -157,6 +166,8 @@ app.get('/cotojest', (req, res)=>{
 app.get('/twojewyznania', (req, res)=>{
   res.render('confessionsList');
 });
-app.listen(_port, ()=>{
-  console.log('listening on port '+_port);
-});
+// app.listen(_port, ()=>{
+//   console.log('listening on port '+_port);
+// });
+var httpsServer = https.createServer(options, app);
+httpsServer.listen(_port);
