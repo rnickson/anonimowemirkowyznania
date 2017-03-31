@@ -26,7 +26,7 @@ apiRouter.get('/participants/:entry_id', (req, res)=>{
     res.json(participants);
   });
 });
-apiRouter.use(auth);
+apiRouter.use(auth(true));
 apiRouter.route('/confession/accept/:confession_id').get((req, res)=>{
   if(!accessController(req.user.flags, 'addEntry'))return res.json({success: false, response: {message: 'You\'re not allowed to perform this action'}});
   confessionModel.findById(req.params.confession_id).populate('survey').exec((err, confession)=>{

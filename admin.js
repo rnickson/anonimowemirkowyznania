@@ -35,7 +35,7 @@ adminRouter.get('/logout', (req, res)=>{
   res.clearCookie('token');
   return res.render('./admin/login.jade', {user: {}, error: 'Wylogowano'});
 });
-adminRouter.use(auth);
+adminRouter.use(auth(true));
 adminRouter.get('/', (req, res)=>{
   res.redirect('/admin/confessions');
 });

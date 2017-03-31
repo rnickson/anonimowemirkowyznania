@@ -9,6 +9,8 @@ block content
     .row
       .panel.panel-default
         .panel-heading Konwersacja
+          if type == 'user'
+            |  z #{userObject.username}
         .panel-body
           .container#messages
             if conversation

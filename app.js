@@ -16,6 +16,7 @@ var userModel = require('./models/user.js');
 var wykopController = require('./controllers/wykop.js');
 var actionController = require('./controllers/actions.js');
 var tagController = require('./controllers/tags.js');
+var auth = require('./controllers/authorization.js');
 var aliasGenerator = require('./controllers/aliases.js');
 var surveyController = require('./controllers/survey.js');
 var crypto = require('crypto');
@@ -43,11 +44,12 @@ app.use(express.static('public'));
 app.use('/api', apiRouter);
 app.use('/admin', adminRouter);
 app.use('/conversation', conversationRouter);
-
+app.use(auth(false));
 app.set('view engine', 'jade');
 
 app.get('/', (req, res)=>{
   res.render('index');
+  console.log(req.user);
 });
 app.post('/', (req, res)=>{
   var confession = new confessionModel();
