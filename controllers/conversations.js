@@ -1,4 +1,6 @@
 var conversationModel = require('../models/conversation.js');
+var wykopController = require('../controllers/wykop.js');
+var config = require('../config.js');
 var conversationController = {
   createNewConversation: function(parentObject, cb){
     var conversation = new conversationModel();
@@ -20,6 +22,7 @@ var conversationController = {
           cb(null, conversation._id);
         });
       }else{
+        wykopController.sendPrivateMessage(parentObject.username, `Nowa wiadomość na anonimowychmirkowyznaniach ${config.siteURL}/conversation/${conversation._id}`, ()=>{});
         return cb(null, conversation._id);
       }
     });
