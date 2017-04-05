@@ -1,7 +1,8 @@
 var jwt = require('jsonwebtoken');
 var config = require('../config.js');
 var userModel = require('../models/user.js');
-module.exports = function(loginRequired=false){
+module.exports = function(loginRequired){
+  if(typeof loginRequired === 'undefined')loginRequired=false;
   return function(req, res, next){
       var token = req.cookies.token || req.body.token || req.query.token || req.headers['x-access-token'];
       if (token) {
