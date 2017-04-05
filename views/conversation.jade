@@ -26,9 +26,10 @@ block content
               input#messageBox.form-control(type='text', name='text' autocomplete='off')
               span.input-group-btn
                 button.btn.btn-default.sendMessage(type='submit') Wyślij
-        p.status-info
-          |Status połączenia WebSocket (jeśli nie ma połączenia wyłącz javascript, aby wysyłać wiadomości)
-          div.status-circle
+        if conversation
+          p.status-info
+            |Status połączenia WebSocket (jeśli nie ma połączenia wyłącz javascript, aby wysyłać wiadomości)
+            div.status-circle
 block script
   if conversation
     script(type="text/javascript").

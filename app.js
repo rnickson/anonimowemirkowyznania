@@ -49,7 +49,6 @@ app.set('view engine', 'jade');
 
 app.get('/', (req, res)=>{
   res.render('index');
-  console.log(req.user);
 });
 app.post('/', (req, res)=>{
   var confession = new confessionModel();
