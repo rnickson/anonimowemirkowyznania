@@ -15,7 +15,7 @@ adminRouter.get('/login', (req, res)=>{
 adminRouter.post('/login', (req, res)=>{
   userModel.findOne({
     username: req.body.username
-  }, (err, user)=>{
+  }, {_id: 1, username: 1, password: 1, flags:1}, (err, user)=>{
     if(err) throw err;
 
     if(!user){
@@ -23,6 +23,7 @@ adminRouter.post('/login', (req, res)=>{
     }
     if(user.password === req.body.password){
       //success login
+      delete user.password;
       var token = jwt.sign(user, config.secret, {expiresIn: 1440*60});
       res.cookie('token', token);
       res.redirect('/admin/confessions');

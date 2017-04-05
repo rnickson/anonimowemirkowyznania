@@ -6,18 +6,20 @@ module.exports = function(loginRequired=false){
       var token = req.cookies.token || req.body.token || req.query.token || req.headers['x-access-token'];
       if (token) {
         jwt.verify(token, config.secret, function(err, decoded) {
-      if (err && loginRequired){
-          return res.render('./admin/login.jade', {user: {}, error: 'Sesja wygasła'});
-        }else{
-          userModel.findById(decoded._doc._id, (err, user)=>{
-            if(!err && user)req.user = user;
-            return next();
-          });
-        }
+          if (err){
+              if(loginRequired)return res.render('./admin/login.jade', {user: {}, error: 'Sesja wygasła'});
+              return next();
+            }else{
+              userModel.findById(decoded._doc._id, {_id: 1, username: 1, flags:1}, (err, user)=>{
+                if(!err && user)req.user = user;
+                return next();
+              });
+            }
       });
     }else if(loginRequired){
           return res.render('./admin/login.jade', {user: {}});
+    }else{
+      return next();
     }
-    return next();
   }
 }

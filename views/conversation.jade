@@ -22,9 +22,9 @@ block content
                   span #{message.text}
           form(id="messageForm" method="post")
             .input-group
-              input#messageBox.form-control(type='text', name='text')
+              input#messageBox.form-control(type='text', name='text' autocomplete='off')
               span.input-group-btn
-                button.btn.btn-default.sendMessage(type='submit' autocomplete="off") Wyślij
+                button.btn.btn-default.sendMessage(type='submit') Wyślij
 block script
   if conversation
     script(type="text/javascript").
@@ -32,5 +32,5 @@ block script
       event.preventDefault();
       });
       const conversationId = '#{conversation._id}';
-      const authCode = '#{conversation.parentID.auth}';
+      const authCode = '#{conversation.auth}';
     script(src=siteURL+"/js/chat.js" type="text/javascript")

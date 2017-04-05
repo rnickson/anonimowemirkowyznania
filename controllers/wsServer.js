@@ -12,13 +12,6 @@ if (fs.existsSync('./certs')) {
 }
 const httpsServer = https.createServer(options, (req, res)=>{});
 var wss = new WebSocketServer({server: httpsServer, port: 1030});
-WebSocketServer.broadcast = function broadcast(data) {
-  wss.clients.forEach(function each(client) {
-    if (client.readyState === 1) {
-      client.send(data);
-    }
-  });
-};
 WebSocketServer.sendToChannel = function broadcast(channel, data) {
   wss.clients.forEach(function each(client) {
     if (client.readyState === 1 && client.conversation == channel) {

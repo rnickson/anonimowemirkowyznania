@@ -36,3 +36,4 @@ controllers/guessAge.js
 controllers/stats.js
 helpers/
 config.js
+certs/
