@@ -5,10 +5,11 @@ const https = require('https');
 var conversationController = require('./conversations.js');
 var options = {};
 if (fs.existsSync('./certs')) {
-  options = {
-    key: fs.readFileSync('./certs/privatekey.key'),
-    cert: fs.readFileSync('./certs/certificate.crt')
-  };
+    options.key = fs.readFileSync('./certs/privatekey.key');
+    options.cert = fs.readFileSync('./certs/certificate.crt');
+  if(fs.existsSync('./certs/ca_bundle.crt')){
+    options.ca = fs.readFileSync('./certs/ca_bundle.crt');
+  }
 }
 const httpsServer = https.createServer(options, (req, res)=>{});
 var wss = new WebSocketServer({server: httpsServer, port: 1030});

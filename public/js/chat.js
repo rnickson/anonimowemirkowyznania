@@ -14,6 +14,10 @@ function escapeHtml(string) {
 }
 ws.onopen = function(){
   ws.onmessage = handleMessage;
+  $(".status-circle").css('background-color', '#83f441');
+}
+ws.onclose = function(){
+  $(".status-circle").css('background-color', '#f44242');
 }
 handleMessage = function(message){
   var message = JSON.parse(message.data);

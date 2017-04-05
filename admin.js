@@ -4,6 +4,7 @@ var adminRouter = express.Router();
 var mongoose = require('mongoose');
 var config = require('./config.js');
 var confessionModel = require('./models/confession.js');
+var conversationModel = require('./models/conversation.js');
 var auth = require('./controllers/authorization.js');
 var accessController = require('./controllers/access.js');
 var replyModel = require('./models/reply.js');
@@ -63,6 +64,12 @@ adminRouter.get('/replies', (req, res)=>{
   replyModel.find().populate('parentID').sort({_id: -1}).limit(100).exec((err, replies)=>{
     if(err) res.send(err);
     res.render('./admin/replies.jade', {user:req.user, replies: replies});
+  });
+});
+adminRouter.get('/messages/', (req, res)=>{
+  conversationModel.find({'userID': req.user._id}, {_id: 1}, {sort:{'messages.time':-1}, limit:200}, (err, conversations)=>{
+    if(err)return res.send(err);
+    res.render('./admin/messages.jade', {user:req.user, conversations});
   });
 });
 module.exports = adminRouter;
