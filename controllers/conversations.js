@@ -22,7 +22,7 @@ var conversationController = {
           cb(null, conversation._id);
         });
       }else{
-        wykopController.sendPrivateMessage(parentObject.username, `Nowa wiadomość na anonimowychmirkowyznaniach ${config.siteURL}/conversation/${conversation._id}`, ()=>{});
+        wykopController.sendPrivateMessage(parentObject.username, `Nowa wiadomość na anonimowychmirkowyznaniach ${config.siteURL}/admin/messages`, ()=>{});
         return cb(null, conversation._id);
       }
     });
