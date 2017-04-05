@@ -18,8 +18,8 @@ block content
               each message, index in conversation.messages
                 -var nickname = (message.OP ? 'OP' : 'Uzytkownik mikrobloga')
                 .row.message-bubble(class=message.OP?'operator':'')
-                  // span.time #{message.time}
                   p.text-muted #{nickname}
+                    span.time.pull-right #{message.time}
                   span #{message.text}
           form(id="messageForm" method="post")
             .input-group
