@@ -45,6 +45,7 @@ adminRouter.get('/details/:confession_id', (req, res)=>{
   if(!accessController(req.user.flags, 'viewDetails'))return res.send('You\'re not permitted to see this page.');
   confessionModel.findById(req.params.confession_id).populate([{path:'actions', options:{sort: {_id: -1}}, populate: {path: 'user', select: 'username'}}, {path:'survey'}]).exec((err, confession)=>{
     if(err) return res.send(err);
+    if(!confession) return res.sendStatus(404);
     confessionModel.find({IPAdress: confession.IPAdress}, {_id: 1, status: 1}, function(err, results){
       if(err)return res.send(err);
       confession.addedFromSameIP = results;
