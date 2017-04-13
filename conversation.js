@@ -5,6 +5,7 @@ var userModel = require('./models/user.js');
 var conversationController = require('./controllers/conversations.js');
 var config = require('./config.js');
 var auth = require('./controllers/authorization.js');
+var wss = require('./controllers/wsServer.js');
 conversationRouter.use(auth(false));
 conversationRouter.get('/:parent/new', (req, res, next)=>{
   if(req.params.parent.substr(0,2) === 'U_'){
@@ -69,6 +70,7 @@ conversationRouter.post('/:conversationid/:auth?', (req, res)=>{
     conversationController.getConversation(req.params.conversationid, req.params.auth, (err, conversation)=>{
       if(err) return res.send(err);
       res.render('conversation', {conversation, siteURL: config.siteURL});
+      wss.sendToChannel(req.params.conversationid, JSON.stringify({type:'newMessage', msg: req.body.text, username:'Użytkownik mikrobloga'}));
     });
   })
 });

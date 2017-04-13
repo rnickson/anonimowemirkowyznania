@@ -13,7 +13,7 @@ if (fs.existsSync('./certs')) {
 }
 const httpsServer = https.createServer(options, (req, res)=>{});
 var wss = new WebSocketServer({server: httpsServer, port: 1030});
-WebSocketServer.sendToChannel = function broadcast(channel, data) {
+wss.sendToChannel = function broadcast(channel, data) {
   wss.clients.forEach(function each(client) {
     if (client.readyState === 1 && client.conversation == channel) {
       client.send(data);
@@ -34,7 +34,7 @@ function onMessage(ws, message) {
       ws.lastMsg = time;
       conversationController.newMessage(ws.conversation, ws.auth, message.msg, ws.IPAdress, (err, isOP)=>{
         if(err)return ws.send(JSON.stringify({type:'alert', body: err}));
-        WebSocketServer.sendToChannel(ws.conversation, JSON.stringify({type:'newMessage', msg: message.msg, username:isOP?'OP':'Użytkownik mikrobloga'}));
+        wss.sendToChannel(ws.conversation, JSON.stringify({type:'newMessage', msg: message.msg, username:isOP?'OP':'Użytkownik mikrobloga'}));
       });
       break;
     default:
