@@ -30,7 +30,7 @@ var conversationController = {
   validateAuth: function(conversationId, auth, cb){
     conversationModel.findOne({_id: conversationId}).populate('parentID', 'auth').exec((err, conversation)=>{
       if(err)return cb(err);
-      if(!conversation)return cb('nie odnaleziono konwersacji'); //this returns string becouse validateAuth function result is sent in chat msg
+      if(!conversation)return cb('nie odnaleziono konwersacji'); //this returns string because validateAuth function result is sent in chat msg
       if(typeof conversation.userID !== 'undefined' && conversation.userID._id == auth)return cb(null, true);
       if(typeof conversation.parentID !== 'undefined' && conversation.parentID.auth == auth)return cb(null,true);
       cb(null, false);
