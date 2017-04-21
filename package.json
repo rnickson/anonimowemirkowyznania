@@ -9,18 +9,18 @@
   "author": "sokytsinolop",
   "license": "MIT",
   "dependencies": {
-    "body-parser": "^1.16.0",
+    "body-parser": "^1.17.1",
     "cookie-parser": "^1.4.3",
     "crypto": "0.0.3",
-    "express": "^4.14.0",
+    "express": "^4.15.2",
     "jade": "^1.11.0",
-    "jsonwebtoken": "^7.2.1",
+    "jsonwebtoken": "^7.3.0",
     "lodash": "^4.17.4",
-    "md5": "^2.1.0",
-    "mongoose": "^4.7.9",
-    "request": "^2.79.0",
+    "md5": "^2.2.1",
+    "mongoose": "^4.9.5",
+    "request": "^2.81.0",
     "uws": "^0.14.1",
-    "wykop-es6": "^0.5.1"
+    "wykop-es6-2": "^0.6.1"
   },
   "repository": {
     "type": "git",

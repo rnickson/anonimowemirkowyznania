@@ -38,3 +38,4 @@ helpers/
 config.js
 certs/
 stats.py
+.vscode/
