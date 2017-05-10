@@ -5,9 +5,9 @@ const actionController = require('./actions.js');
 const surveyModel = require('../models/survey.js');
 const loginEndpoint = 'https://www.wykop.pl/zaloguj/';
 // const addEntryEndpoint = 'http://www.wykop.pl/xhr/entry/create/';
-const addEntryEndpoint = 'http://www.wykop.pl/ajax2/wpis/dodaj/hash/';
+const addEntryEndpoint = 'https://www.wykop.pl/ajax2/wpis/dodaj/hash/';
 // const uploadAttachmentEndpoint = 'http://www.wykop.pl/xhr/embed/url/';
-const uploadAttachmentEndpoint = 'http://www.wykop.pl/ajax2/embed/url/hash/';
+const uploadAttachmentEndpoint = 'https://www.wykop.pl/ajax2/embed/url/hash/';
 const idRegex = /data-id=\\"(\d{8})\\"/;
 const hashRegex = /"([a-f0-9]{32}-\d{10})"/
 const embedHashRegex = /"hash":"([A-Za-z0-9]{32})/;
@@ -53,7 +53,7 @@ wykopLogin = function(cb){
   request({method: 'POST', url: loginEndpoint, form: {'user[username]': config.wykop.username, 'user[password]': config.wykop.password}, jar:wykopSession}, function(err, response, body){
     if(!err && response.statusCode == 302){
       //logged in
-      request({method: 'GET', url: 'http://www.wykop.pl/info/', jar:wykopSession}, function(err, response, body){
+      request({method: 'GET', url: 'https://www.wykop.pl/info/', jar:wykopSession}, function(err, response, body){
         if(response.statusCode === 200){
         hash = body.match(hashRegex)[1];
         return cb({success: true, response: {message: 'logged in', status: 'error'}});
