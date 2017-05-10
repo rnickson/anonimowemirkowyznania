@@ -14,13 +14,13 @@
     "crypto": "0.0.3",
     "express": "^4.15.2",
     "jade": "^1.11.0",
-    "jsonwebtoken": "^7.3.0",
+    "jsonwebtoken": "^7.4.0",
     "lodash": "^4.17.4",
     "md5": "^2.2.1",
-    "mongoose": "^4.9.5",
+    "mongoose": "^4.9.8",
     "request": "^2.81.0",
-    "uws": "^0.14.1",
-    "wykop-es6-2": "^0.6.1"
+    "uws": "^0.14.5",
+    "wykop-es6-2": "^0.6.2"
   },
   "repository": {
     "type": "git",
