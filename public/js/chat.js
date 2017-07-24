@@ -24,7 +24,7 @@ handleMessage = function(message){
   switch (message.type) {
     case 'newMessage':
       message.msg = escapeHtml(message.msg);
-      var html = `<div class=\"row message-bubble ${message.username=='OP'?'operator':''}\"><p class=\"text-muted\">${message.username}</p><span>${message.msg}</span></div>`;
+      var html = `<div class=\"row message-bubble message-body ${message.username=='OP'?'operator':''}\"><p class=\"text-muted\">${message.username}</p><span>${message.msg}</span></div>`;
       $('#messages').append(html);
       break;
     default:
@@ -43,7 +43,7 @@ $('.sendMessage').click(function(){
   sendMessage(msg);
 });
 $("#messageBox").keypress(function(event) {
-    if (event.which == 13) {
+    if (event.which == 13 && !event.shiftKey) {
         event.preventDefault();
         var msg = $(this).val();
         sendMessage(msg);

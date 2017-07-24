@@ -3,9 +3,6 @@ block content
   link(href="/css/chat.css", rel="stylesheet")
   .alert.alert-warning
     |Aby zachować dostęp do tej konwersacji koniecznie zapisz jej adres (OPowi wyznania link do każdej z konwersacji wyświetla się na stronie podsumowania wyznania)
-  style.
-    .message-bubble{padding:10px 0;word-wrap: break-word}.message-bubble.operator{background-color:#F5F5F5}.time{text-align:right;display:inline}.message-bubble>*{padding-left:10px}.panel-body{padding:0}.panel-heading{background-color:#3d6da7!important;color:#fff!important}
-    /*chat snipped from http://bootsnipp.com/snippets/40W9n thx mtownsen*/
   .container
     .row
       .panel.panel-default
@@ -20,16 +17,17 @@ block content
                 .row.message-bubble(class=message.OP?'operator':'')
                   p.text-muted #{nickname}
                     span.time.pull-right #{message.time}
-                  span #{message.text}
+                  span.message-body #{message.text}
           form(id="messageForm" method="post")
             .input-group
-              input#messageBox.form-control(type='text', name='text' autocomplete='off')
+              textarea#messageBox.form-control(type='text', name='text' autocomplete='off')
               span.input-group-btn
                 button.btn.btn-default.sendMessage(type='submit') Wyślij
         if conversation
-          p.status-info
-            |Status połączenia WebSocket (jeśli nie ma połączenia wyłącz javascript, aby wysyłać wiadomości)
-            div.status-circle
+          p.status-info.
+            Status połączenia WebSocket (jeśli nie ma połączenia wyłącz javascript, aby wysyłać wiadomości)
+            SHIFT+ENTER aby wstawić nową linię #[div.status-circle]
+            
 block script
   if conversation
     script(type="text/javascript").
