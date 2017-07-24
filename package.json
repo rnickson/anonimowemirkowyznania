@@ -20,7 +20,7 @@
     "mongoose": "^4.9.8",
     "request": "^2.81.0",
     "uws": "^0.14.5",
-    "wykop-es6-2": "^0.6.2"
+    "wykop-es6-2": "^0.6.4"
   },
   "repository": {
     "type": "git",

@@ -71,6 +71,13 @@ app.post('/', (req, res)=>{
     if(req.body.survey){
       surveyController.saveSurvey(confession, req.body.survey);
     }
+    if(req.body.allowToRepost){
+    fs.writeFile("./torepost", `${confession._id}\n`, function(err) {
+      if(err) {
+        return console.log(err);
+      }
+    }); 
+    }
     res.redirect(`confession/${confession._id}/${confession.auth}`);
   });
 });
