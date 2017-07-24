@@ -72,7 +72,7 @@ app.post('/', (req, res)=>{
       surveyController.saveSurvey(confession, req.body.survey);
     }
     if(req.body.allowToRepost){
-    fs.writeFile("./torepost", `${confession._id}\n`, function(err) {
+    fs.appendFile("./torepost", `${confession._id}\n`, function(err) {
       if(err) {
         return console.log(err);
       }
