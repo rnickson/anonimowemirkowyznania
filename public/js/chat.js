@@ -24,7 +24,7 @@ handleMessage = function(message){
   switch (message.type) {
     case 'newMessage':
       message.msg = escapeHtml(message.msg);
-      var html = `<div class=\"row message-bubble message-body ${message.username=='OP'?'operator':''}\"><p class=\"text-muted\">${message.username}</p><span>${message.msg}</span></div>`;
+      var html = `<div class=\"row message-bubble message-body ${message.username=='OP'?'operator':''}\"><p class=\"text-muted\">${message.username}<span class="time pull-right">${new Date()}</span></p><span>${message.msg}</span></div>`;
       $('#messages').append(html);
       break;
     default:
@@ -34,7 +34,7 @@ handleMessage = function(message){
 sendMessage = function(msg){
   msg = msg.trim();
   if(!msg)return alert('Wpisz wiadomość');
-  if(msg.length>1024)return alert('Wiadomość jest za długa');
+  if(msg.length>4096)return alert('Wiadomość jest za długa');
   ws.send(JSON.stringify({type: 'chatMsg', msg: msg}));
   $("#messageBox").val('');
 }
