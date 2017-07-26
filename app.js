@@ -170,6 +170,9 @@ app.get('/cotojest', (req, res)=>{
 app.get('/twojewyznania', (req, res)=>{
   res.render('confessionsList');
 });
+app.get('/kontakt', (req, res)=>{
+  res.render('kontakt');
+});
 // app.listen(_port, ()=>{
 //   console.log('listening on port '+_port);
 // });

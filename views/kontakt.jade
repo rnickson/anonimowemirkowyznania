@@ -1,0 +1,68 @@
+extends ./base.jade
+block content
+  p.info Możesz skontaktować się z administratorem serwisu na różne sposoby
+    ul
+      li #[a(href="/conversation/U_sokytsinolop/new") konwersacja na mirkowyznania.eu (anonimowe)]
+      li #[a(href="https://www.wykop.pl/wiadomosc-prywatna/konwersacja/sokytsinolop/") wykop]
+    |Jeśli chcesz zaszyfrować wiadomość użyj formularza poniżej. Zaszyfrowaną wiadomość możesz przekazać mi przez dowolną formę kontaktu z listy powyżej. #[b Pamiętaj jeśli chcesz, żebym również mógł odpowiedzieć zaszyfrowaną wiadomościa musisz w wiadomości zawrzeć swój klucz publiczny]
+  textarea#pgp-message.form-control(style='width: 600px; height: 300px')
+  br
+  button#pgp-message-button.btn.btn-primary(type='button') Encrypt message
+  button#pgp-message-clear.btn.btn-default(type='button') Clear
+  span.text-muted powerder by #[a(href='http://openpgpjs.org/') OpenPGP.js]
+  h2 Klucz publiczny 
+  pre#public-key.
+    -----BEGIN PGP PUBLIC KEY BLOCK-----
+    Version: GnuPG v2
+
+    mQENBFl1vNcBCADE+bLhK5NdGqfYWWCJi4fqhEpb6CuLUokLMKMoP3ALUQtdE9Yz
+    NkI09hEf9MBbUh7DFDNWWiZknBAxI7M6WN17LVHuekcpoYzDGn96yJtZEcvNgcjU
+    A8+URQYlXSFR6nZPxBfvaCYrqMSCwLfACgUvi+7GygvkbgIaL/VOUYlx1bdUzNsO
+    5XKfUVgURBUyJTygqmq24+XuzyWj57af74WPEGTFa84PpXMKsJboZFJbn99pvOyf
+    xNWISbuCYg1BlCJIvvYMewECrjMLt8UuXXKsI1tdbG84EdIhCYHrKjcYcJTb8GQj
+    GH8XRVLSX9v2xsBxlONeAO6OOoBsxsazHh0hABEBAAG0GEZpbGlwIDxmaXF4aW9A
+    Z21haWwuY29tPokBOQQTAQgAIwUCWXW81wIbAwcLCQgHAwIBBhUIAgkKCwQWAgMB
+    Ah4BAheAAAoJEMp/iLQsZIBAKDYH/1G08Q+Q0IiqxPc1mvb78LGy4IibyJ6Quldd
+    zdUCbcKYo1jUAZ9Qzb8exy+PdGULmaqD0vDupOCz1h0Uxh+H9kJxBO94g9W+XnBR
+    XK5bA8dGpLSQgMRREgFR3CnR4wgSED7E91tGbLBFQsPhGdfxmezcx36KxkJzFKEn
+    7s9Jd0K1YPH51v/ckpzWsKJuvaetRHeiukNU0e8D1XZ2KKvFHFja3NnlHZ7upIW4
+    gmWmH+bgeMAFz06gK/HKdULNLKKp305hkxWYP7aQSeW2fRTlIgso/U1d6SIxbkCR
+    BoHWvX/f1m2rD5eZpAGODW6FtkT15jCc+NvLKrTgH9NPbFXqgJi5AQ0EWXW81wEI
+    AJP4+4qLBaVV64mlDEW47IhJ1iGEHGMEZdaUOeaLCFRJPtnpdc9uzHeShp9hvjU+
+    hJ1sBA5F+FHgBtbcXy9W5fewFazI5ugiwVzqiloTyGkCze2K3pHCGvQZO6+0rXgl
+    VaEnY1WZtRHudQIECwmfLZw6fVUzawiM11kwrVGjcO+Iy6WQMm9R6b4KFVQCw/66
+    3BfgVopyLTzCY7e/3ku5Yeqt3X7OsTRggWRnl+cAMJhfg4TTY5hrZlniGVeKqSw1
+    txHrB/M4wN+RB0cwIkwqKSkog8epa9ddcXVkhhVW3s9NsBfEaqCg1EssDGPKOaRl
+    xXRlj4SpdpHRi3+vMdP9hOUAEQEAAYkBHwQYAQgACQUCWXW81wIbDAAKCRDKf4i0
+    LGSAQLeGB/0Yysl74hfieq6lfnxN7Gj4Z/WEyOMndMMB8ui4FXaGakaiTmUNI1Sx
+    LkPwCCelLptAuP3buVE78IBOj0vyw4We51i8hdaIrbDjws3qAZd9CQOVJJC0+4s9
+    VKSpIH+KC3M8BdrOMfGk9u3eaGgMeINYW3/le7+6rKQsPRL+Dv4zsHs/foRybk77
+    VgQRyIXZQsl0iyB0lVgqzQJKiFcbIy95LE2ADkrHvxc3MKFn12tB7DuZTakrpxQf
+    fMeXLFwsFJajFoM7UF5aAI0Kcos6s3KCJvIG/KdV8v8JcDSV4x5+Z0nPZOcVpy+8
+    tKkWcyqtXXdcV8h9Er/eF+EnXySyJ2Ol
+    =VmOV
+    -----END PGP PUBLIC KEY BLOCK-----
+block script
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/openpgp/2.5.8/openpgp.min.js")
+  script(type='text/javascript').
+    $(document).ready(function() {
+      $('#pgp-message-button').click(function() {
+        var message = $('#pgp-message').val();
+        if(message.length == 0) {
+          alert("Please enter a message.");
+          return;
+        } else if(message.indexOf("-----BEGIN PGP MESSAGE-----") === 0) {
+          alert("The message has already been encrypted; no need to encrypt it again.");
+          return;
+        }
+        
+        var pubKey = openpgp.key.readArmored($('#public-key').text()).keys;
+        openpgp.encrypt({data: message, publicKeys: pubKey}).then(function(ciphertext){
+          $('#pgp-message').val(ciphertext.data);
+        });
+      });
+      
+      $('#pgp-message-clear').click(function() {
+        $('#pgp-message').val('');
+      });
+    });
