@@ -3,6 +3,8 @@ const config = require('../config.js');
 const tagController = require('./tags.js');
 const actionController = require('./actions.js');
 const surveyModel = require('../models/survey.js');
+const bodyBuildier = require('./bodyBuildier.js');
+
 const loginEndpoint = 'https://www.wykop.pl/zaloguj/';
 // const addEntryEndpoint = 'http://www.wykop.pl/xhr/entry/create/';
 const addEntryEndpoint = 'https://www.wykop.pl/ajax2/wpis/dodaj/hash/';
@@ -68,29 +70,30 @@ wykopLogin = function(cb){
 }
 acceptSurvey = function(confession, user, cb){
   cb=cb||function(){};
-  var entryBody = `#anonimowemirkowyznania \n${confession.text}\n\n [Kliknij tutaj, aby odpowiedzieć w tym wątku anonimowo](${config.siteURL}/reply/${confession._id}) \n[Kliknij tutaj, aby wysłać OPowi anonimową wiadomość prywatną](${config.siteURL}/conversation/${confession._id}/new) \nPost dodany za pomocą skryptu AnonimoweMirkoWyznania ( ${config.siteURL} ) Zaakceptował: ${user.username}`;
-  uploadAttachment(confession.embed, (result)=>{
-    if(!result.success)return cb({success: false, response: {message: 'couln\'t upload attachment', status: 'error'}});
-    //its required for some reason, otherwise CALL_AND_RETRY_LAST Allocation failed - JavaScript heap out of memory
-    var answers = confession.survey.answers.map((v)=>{return v;});
-    var data = {body: tagController.trimTags(entryBody, confession.tags), attachment: result.hash, 'survey[question]': confession.survey.question, 'survey[answers]': answers};
-    request({method:'POST', url: addEntryEndpoint+hash, form: data, jar:wykopSession}, function(err, response, body){
-      if(err)return cb({success: false, response: {message: 'Wykop umar', status: 'error'}});
-      if(!(body.substr(0,8)=='for(;;);'))return cb({success: false, relogin: true, response:{message:'Session expired, reloging'}});
-      try {
-        var entryId = body.match(idRegex)[1];
-      } catch (e) {
-        var flag;
-        (body.search('Sesja')>-1)?flag=true:flag=false;
-        return cb({success: false, relogin: flag, response: {message: body, status: 'error'}})
-      }
-      actionController(confession, user._id, 1);
-      confession.status = 1;
-      confession.addedBy = user.username;
-      confession.entryID = entryId;
-      confession.save((err)=>{
-        if(err)return cb({success: false, response: {message: 'couln\'t save confession', status: 'error'}});
-        return cb({success: true, response: {message: 'Entry added: '+entryId, status: 'success'}});
+  bodyBuildier.getEntryBody(confession, user, function(entryBody){
+    uploadAttachment(confession.embed, (result)=>{
+      if(!result.success)return cb({success: false, response: {message: 'couln\'t upload attachment', status: 'error'}});
+      //its required for some reason, otherwise CALL_AND_RETRY_LAST Allocation failed - JavaScript heap out of memory
+      var answers = confession.survey.answers.map((v)=>{return v;});
+      var data = {body: entryBody, attachment: result.hash, 'survey[question]': confession.survey.question, 'survey[answers]': answers};
+      request({method:'POST', url: addEntryEndpoint+hash, form: data, jar:wykopSession}, function(err, response, body){
+        if(err)return cb({success: false, response: {message: 'Wykop umar', status: 'error'}});
+        if(!(body.substr(0,8)=='for(;;);'))return cb({success: false, relogin: true, response:{message:'Session expired, reloging'}});
+        try {
+          var entryId = body.match(idRegex)[1];
+        } catch (e) {
+          var flag;
+          (body.search('Sesja')>-1)?flag=true:flag=false;
+          return cb({success: false, relogin: flag, response: {message: body, status: 'error'}})
+        }
+        actionController(confession, user._id, 1);
+        confession.status = 1;
+        confession.addedBy = user.username;
+        confession.entryID = entryId;
+        confession.save((err)=>{
+          if(err)return cb({success: false, response: {message: 'couln\'t save confession', status: 'error'}});
+          return cb({success: true, response: {message: 'Entry added: '+entryId, status: 'success'}});
+        });
       });
     });
   });

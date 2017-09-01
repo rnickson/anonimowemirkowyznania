@@ -11,7 +11,7 @@ module.exports = function(loginRequired){
               if(loginRequired)return res.render('./admin/login.jade', {user: {}, error: 'Sesja wygasła'});
               return next();
             }else{
-              userModel.findById(decoded._doc._id, {_id: 1, username: 1, flags:1}, (err, user)=>{
+              userModel.findById(decoded._id, {_id: 1, username: 1, flags:1}, (err, user)=>{
                 if(!err && user)req.user = user;
                 return next();
               });

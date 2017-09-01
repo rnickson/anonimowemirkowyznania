@@ -1,6 +1,6 @@
 var config = require('../config.js');
 var wykop = require('../wykop.js');
-var tagController = require('../controllers/tags.js');
+var bodyBuildier = require('../controllers/bodyBuildier.js');
 var actionController = require('../controllers/actions.js');
 var config = require('../config.js');
 getFollowers = function(entryID, notificationCommentId, cb){
@@ -63,25 +63,26 @@ sendPrivateMessage = function(recipient, body, cb){
   });
 }
 acceptConfession = function(confession, user, cb){
-  var entryBody = `#anonimowemirkowyznania \n${confession.text}\n\n [Kliknij tutaj, aby odpowiedzieć w tym wątku anonimowo](${config.siteURL}/reply/${confession._id}) \n[Kliknij tutaj, aby wysłać OPowi anonimową wiadomość prywatną](${config.siteURL}/conversation/${confession._id}/new) \nPost dodany za pomocą skryptu AnonimoweMirkoWyznania ( ${config.siteURL} ) Zaakceptował: [${user.username}](${config.siteURL}/conversation/U_${user.username}/new)`;
-  wykop.request('Entries', 'Add', {post: {body: tagController.trimTags(entryBody, confession.tags), embed: confession.embed}}, (err, response)=>{
-    if(err){
-      if(err.error.code === 11 || err.error.code === 12 || err.error.code === 13)wykop.relogin();
-      return cb({success: false, response: {message: JSON.stringify(err), status: 'warning'}});
-    }
-    confession.entryID = response.id;
-    actionController(confession, user._id, 1);
-    confession.status = 1;
-    confession.addedBy = user.username;
-    confession.save((err)=>{
-      if(err)return cb({success: false, response: {message: err}});
-      cb({success: true, response: {message: 'Entry added', entryID: response.id, status: 'success'}});
+  bodyBuildier.getEntryBody(confession, user, function(entryBody){
+    wykop.request('Entries', 'Add', {post: {body: entryBody, embed: confession.embed}}, (err, response)=>{
+      if(err){
+        if(err.error.code === 11 || err.error.code === 12 || err.error.code === 13)wykop.relogin();
+        return cb({success: false, response: {message: JSON.stringify(err), status: 'warning'}});
+      }
+      confession.entryID = response.id;
+      actionController(confession, user._id, 1);
+      confession.status = 1;
+      confession.addedBy = user.username;
+      confession.save((err)=>{
+        if(err)return cb({success: false, response: {message: err}});
+        cb({success: true, response: {message: 'Entry added', entryID: response.id, status: 'success'}});
+      });
     });
   });
 }
 addNotificationComment = function(confession, user, cb){
   cb=cb||function(){};
-  wykop.request('Entries', 'AddComment', {params: [confession.entryID], post: {body: `Zaplusuj ten komentarz, aby otrzymywać powiadomienia o odpowiedziach w tym wątku. [Kliknij tutaj, jeśli chcesz skopiować listę obserwujących](${config.siteURL}/followers/${confession._id})`}}, (err, notificationComment)=>{
+  wykop.request('Entries', 'AddComment', {params: [confession.entryID], post: {body: bodyBuildier.getNotificationCommentBody(confession)}}, (err, notificationComment)=>{
     if(err) return cb({success: false, response: {message: err, status: 'error'}});
     confession.notificationCommentId = notificationComment.id;
     actionController(confession, user._id, 6);
@@ -90,11 +91,7 @@ addNotificationComment = function(confession, user, cb){
   });
 }
 acceptReply = function(reply, user, cb){
-  var authorized = '';
-  if(reply.authorized){
-    authorized = '\n**Ten komentarz został dodany przez osobę dodającą wpis (OP)**';
-  }
-  var entryBody = `**${reply.alias}**: ${reply.text}\n${authorized}\nZaakceptował: ${user.username}`;
+  var entryBody = bodyBuildier.getCommentBody(reply, user);
   getFollowers(reply.parentID.entryID, reply.parentID.notificationCommentId, (err, followers)=>{
     if(err)return cb({success: false, response:{message:JSON.stringify(err)}});
     if(followers.length > 0)entryBody+=`\n! Wołam obserwujących: ${followers.map(function(f){return '@'+f;}).join(', ')}`;

@@ -13,6 +13,8 @@ var conversationRouter = require('./conversation.js');
 var confessionModel = require('./models/confession.js');
 var replyModel = require('./models/reply.js');
 var userModel = require('./models/user.js');
+var advertismentModel = require('./models/ads.js');
+
 var wykopController = require('./controllers/wykop.js');
 var actionController = require('./controllers/actions.js');
 var tagController = require('./controllers/tags.js');
@@ -172,6 +174,14 @@ app.get('/twojewyznania', (req, res)=>{
 });
 app.get('/kontakt', (req, res)=>{
   res.render('kontakt');
+});
+app.get('/link/:linkId/:from', function(req, res){
+    advertismentModel.findOne({_id: req.params.linkId}, function(err, ad){
+      if(err || !ad)return 404;
+      ad.visits.push({IPAdress: req.ip, from: req.params.from});
+      ad.save();
+      res.redirect(ad.out);
+    });
 });
 // app.listen(_port, ()=>{
 //   console.log('listening on port '+_port);

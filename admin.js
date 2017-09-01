@@ -25,7 +25,7 @@ adminRouter.post('/login', (req, res)=>{
     if(user.password === req.body.password){
       //success login
       delete user.password;
-      var token = jwt.sign(user, config.secret, {expiresIn: 1440*60});
+      var token = jwt.sign({_id: user._id, username: user.username, flags: user.flags, exp: Math.floor(Date.now() / 1000) + 60*60*24}, config.secret);
       res.cookie('token', token);
       res.redirect('/admin/confessions');
     }else{
