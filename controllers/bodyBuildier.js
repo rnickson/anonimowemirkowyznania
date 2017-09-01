@@ -8,7 +8,7 @@ function getEntryBody(confession, user, cb){
         if(err || !randomAd)return cb(entryBody);
         var caption = randomAd.captions[Math.floor(Math.random()*randomAd.captions.length)];
         // entryBody+=`\nDodatek wspierany przez: [${caption}](https://${config.siteURL}/link/${randomAd._id}/${confession._id})}`
-        entryBody+=`\nDodatek wspierany przez: [${caption}](${randomAd.out})`;
+        if(randomAd)entryBody+=`\nDodatek wspierany przez: [${caption}](${randomAd.out})`;
         return cb(entryBody);
     });
 }
