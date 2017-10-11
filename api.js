@@ -10,6 +10,7 @@ var auth = require('./controllers/authorization.js');
 var accessController = require('./controllers/access.js');
 var config = require('./config.js');
 var confessionModel = require('./models/confession.js');
+var statsModel = require('./models/stats.js');
 var replyModel = require('./models/reply.js');
 
 mongoose.connect(config.mongoURL, (err)=>{
@@ -42,12 +43,18 @@ apiRouter.route('/confession/accept/:confession_id').get((req, res)=>{
         if(!result.success&&result.relogin){
           surveyController.wykopLogin();
         }
-        if(result.success)wykopController.addNotificationComment(confession, req.user);
+        if(result.success){
+          wykopController.addNotificationComment(confession, req.user);
+          statsModel.addAction('accepted_surveys', req.user.username);
+        }
         return res.json(result);
       });
     }else{
       wykopController.acceptConfession(confession, req.user, function(result){
-        if(result.success)wykopController.addNotificationComment(confession, req.user);
+        if(result.success){
+          wykopController.addNotificationComment(confession, req.user);
+          statsModel.addAction('confessions_accepted', req.user.username);
+        }
         return res.json(result);
       });
     }
@@ -64,6 +71,7 @@ apiRouter.route('/confession/danger/:confession_id/:reason?').get((req, res)=>{
     actionController(confession, req.user._id, actionType, reason);
     confession.save((err)=>{
       if(err) return res.json({success: false, response: {message: err}});
+      if(confession.status === -1)statsModel.addAction('declined_confessions', req.user.username);
       res.json({success: true, response: {message: 'Zaaktualizowano status', status: status}});
     });
   });
@@ -90,6 +98,7 @@ apiRouter.route('/confession/delete/:confession_id').get((req, res)=>{
         confession.status = -1;
         confession.save((err)=>{
           if(err)return res.json({success: false, response: {message: err}});
+          statsModel.addAction('deleted_confessions', req.user.username);
           res.json({success: true, response: {message: `Usunięto wpis ID: ${result.id}`}});
           wykopController.sendPrivateMessage('sokytsinolop', `${req.user.username} usunął wpis \n ${deletedEntry.id}`, ()=>{});
       });
@@ -110,6 +119,7 @@ apiRouter.route('/reply/accept/:reply_id').get((req, res)=>{
     }
     wykopController.acceptReply(reply, req.user, function(result){
       res.json(result);
+      if(result.success)statsModel.addAction('replies_added', req.user.username);
     });
   });
 });
@@ -123,6 +133,7 @@ apiRouter.route('/reply/danger/:reply_id/').get((req, res)=>{
     reply.save((err)=>{
       if(err) res.json({success: false, response: {message: err}});
       actionController(reply.parentID, req.user._id, actionType);
+      if(reply.status === -1)statsModel.addAction('replies_declined', req.user.username);
       res.json({success: true, response: {message: 'Status zaaktualizowany', status: status}});
     });
   });

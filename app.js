@@ -14,6 +14,7 @@ var confessionModel = require('./models/confession.js');
 var replyModel = require('./models/reply.js');
 var userModel = require('./models/user.js');
 var advertismentModel = require('./models/ads.js');
+var statsModel = require('./models/stats.js');
 
 var wykopController = require('./controllers/wykop.js');
 var actionController = require('./controllers/actions.js');
@@ -72,14 +73,9 @@ app.post('/', (req, res)=>{
     if(err) return res.send(err);
     if(req.body.survey){
       surveyController.saveSurvey(confession, req.body.survey);
+      statsModel.addAction('new_surveys');
     }
-    if(req.body.allowToRepost){
-    fs.appendFile("./torepost", `${confession._id}\n`, function(err) {
-      if(err) {
-        return console.log(err);
-      }
-    }); 
-    }
+    statsModel.addAction('new_confessions');
     res.redirect(`confession/${confession._id}/${confession.auth}`);
   });
 });
@@ -144,6 +140,7 @@ app.post('/reply/:confessionid', (req, res)=>{
     reply.parentID = confession._id;
     reply.save((err)=>{
       if(err) res.send(err);
+        statsModel.addAction('new_reply');
         res.render('reply', {success: true, reply: reply, confession: confession});
     });
     }else{
