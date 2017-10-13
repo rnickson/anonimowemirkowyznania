@@ -13,8 +13,8 @@ var periods = [['year', new Date(date.getFullYear(), 0, 1), `${date.getFullYear(
     'day', new Date(date.getFullYear(), date.getMonth(), date.getDate()), `${date.getDate()}-${date.getMonth()+1}-${date.getFullYear()}`]];
 for (var i = 0; i < periods.length; i++) {
     var increment = {};
-    increment[`count.${type}.${periods[i][2]}`] = 1;
-    if(username)increment[`users.${username}.${type}.${periods[i][2]}`] = 1;
+    increment[`count.${type}`] = 1;
+    if(username)increment[`users.${username}.${type}`] = 1;
     this.updateOne({date: periods[i][1], period: periods[i][0]}, {date: periods[i][1], period: periods[i][0], $inc:increment}, {upsert: true}).exec(err=>{
     if(err)console.log(err);
     });
