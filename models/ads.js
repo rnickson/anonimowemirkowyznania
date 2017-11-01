@@ -15,7 +15,7 @@ advertismentSchema.statics.random = function(callback) {
         return callback(err);
       }
       var rand = Math.floor(Math.random() * count);
-      this.findOne({}, 'name captions out').skip(rand).exec(callback);
+      this.findOne({active: true}, 'name captions out').skip(rand).exec(callback);
     }.bind(this));
   };
 module.exports = mongoose.model('advertisments', advertismentSchema);
