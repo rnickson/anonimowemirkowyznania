@@ -4,7 +4,7 @@ var jwt = require('jsonwebtoken');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var config = require('./config.js');
-var Wykop = require('wykop-es6');
+var Wykop = require('wykop-es6-2');
 var wykop = new Wykop(config.wykop.key, config.wykop.secret);
 var md5 = require('md5');
 var apiRouter = require('./api.js');
@@ -22,6 +22,8 @@ var tagController = require('./controllers/tags.js');
 var auth = require('./controllers/authorization.js');
 var aliasGenerator = require('./controllers/aliases.js');
 var surveyController = require('./controllers/survey.js');
+var notifier = require('./controllers/notifierClient.js');
+
 var crypto = require('crypto');
 var https = require('https');
 const fs = require('fs');
@@ -76,6 +78,7 @@ app.post('/', (req, res)=>{
       statsModel.addAction('new_surveys');
     }
     statsModel.addAction('new_confessions');
+    notifier('confession', String(confession._id));
     res.redirect(`confession/${confession._id}/${confession.auth}`);
   });
 });
@@ -141,6 +144,7 @@ app.post('/reply/:confessionid', (req, res)=>{
     reply.save((err)=>{
       if(err) res.send(err);
         statsModel.addAction('new_reply');
+        notifier('reply', String(reply._id));
         res.render('reply', {success: true, reply: reply, confession: confession});
     });
     }else{
