@@ -1,3 +1,8 @@
+var _port = 1337;
+if (typeof(PhusionPassenger) !== 'undefined') {
+    PhusionPassenger.configure({ autoInstall: false });
+    _port = 'passenger';
+}
 var express = require('express');
 var app = express();
 var jwt = require('jsonwebtoken');
@@ -25,11 +30,6 @@ var surveyController = require('./controllers/survey.js');
 var crypto = require('crypto');
 var https = require('https');
 const fs = require('fs');
-var _port = 1337;
-if (typeof(PhusionPassenger) !== 'undefined') {
-    PhusionPassenger.configure({ autoInstall: false });
-    _port = 'passenger';
-}
 //wss server must be required after we tell Passenger that the app is binding 2 ports.
 const wss = require('./controllers/wsServer.js');
 var options = {};
