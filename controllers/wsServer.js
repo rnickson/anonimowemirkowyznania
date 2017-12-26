@@ -15,7 +15,8 @@ const httpsServer = https.createServer(options, (req, res) => {
   res.writeHead(200);
   res.end('hello world\n');
 });
-var wss = new WebSocketServer({server: httpsServer, port: 1030});
+var wss = new WebSocketServer({server: httpsServer});
+httpsServer.listen(1030);
 wss.sendToChannel = function broadcast(channel, data) {
   wss.clients.forEach(function each(client) {
     if (client.readyState === 1 && client.conversation == channel) {
