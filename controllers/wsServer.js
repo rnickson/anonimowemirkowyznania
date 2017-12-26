@@ -1,4 +1,4 @@
-const WebSocketServer = require('uws').Server;
+const WebSocketServer = require('ws').Server;
 const url = require('url');
 const fs = require('fs');
 const https = require('https');
@@ -11,7 +11,10 @@ if (fs.existsSync('./certs')) {
     options.ca = fs.readFileSync('./certs/ca_bundle.crt');
   }
 }
-const httpsServer = https.createServer(options, (req, res)=>{});
+const httpsServer = https.createServer(options, (req, res) => {
+  res.writeHead(200);
+  res.end('hello world\n');
+});
 var wss = new WebSocketServer({server: httpsServer, port: 1030});
 wss.sendToChannel = function broadcast(channel, data) {
   wss.clients.forEach(function each(client) {
@@ -41,14 +44,15 @@ function onMessage(ws, message) {
     ws.send(JSON.stringify({type: 'alert', body: 'unknown message type'}));
   }
 }
-wss.on('connection', function(ws){
-  var url_parts = url.parse(ws.upgradeReq.url, true);
+wss.on('connection', function(ws, req){
+  ws.on('error', (err) => console.log(err));
+  var url_parts = url.parse(req.url, true);
   var params = url_parts.query;
   ws.conversation = params.conversation;
   ws.auth = params.auth;
   ws.IPAdress = ws._socket.remoteAddress;
   conversationController.validateAuth(params.conversation, params.auth, (err, result)=>{
-    if(err)ws.send({type: 'alert', body: err});
+    if(err)ws.send(JSON.stringify({type: 'alert', body: err}));
     if(result)ws.authorized = true;
     ws.on('message', (message)=>{onMessage(ws, message)});
     return;

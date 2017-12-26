@@ -1,4 +1,4 @@
-var ws = new WebSocket(`wss://localhost:1030/?conversation=${conversationId}&auth=${authCode}`);
+var ws = new WebSocket(`ws://localhost:1030/?conversation=${conversationId}&auth=${authCode}`);
 var entityMap = {
   "&": "&amp;",
   "<": "&lt;",
