@@ -34,7 +34,7 @@ handleMessage = function(message){
 sendMessage = function(msg){
   msg = msg.trim();
   if(!msg)return alert('Wpisz wiadomość');
-  if(msg.length>4096)return alert('Wiadomość jest za długa');
+  if(msg.length>4096)return alert('Wiadomość jest za długa. Możesz wysłać długą wiadomość jako kilka krótszych');
   ws.send(JSON.stringify({type: 'chatMsg', msg: msg}));
   $("#messageBox").val('');
 }

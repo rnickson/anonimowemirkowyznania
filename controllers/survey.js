@@ -14,6 +14,7 @@ const idRegex = /data-id=\\"(\d{8})\\"/;
 const hashRegex = /"([a-f0-9]{32}-\d{10})"/
 const embedHashRegex = /"hash":"([A-Za-z0-9]{32})/;
 const wykopSession = request.jar();
+const userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:58.0) Gecko/20100101 Firefox/58.0";
 var hash;
 validateSurvey = function(survey){
   if(survey.question.length < 5){
@@ -52,21 +53,21 @@ saveSurvey = function(confession, surveyData){
 }
 wykopLogin = function(cb){
   cb=cb||function(){};
-  request({method: 'POST', url: loginEndpoint, form: {'user[username]': config.wykop.username, 'user[password]': config.wykop.password}, jar:wykopSession}, function(err, response, body){
-    if(!err && response.statusCode == 302){
-      //logged in
-      request({method: 'GET', url: 'https://www.wykop.pl/info/', jar:wykopSession}, function(err, response, body){
-        if(response.statusCode === 200){
-        hash = body.match(hashRegex)[1];
-        return cb({success: true, response: {message: 'logged in', status: 'error'}});
+    request({method: 'POST', url: loginEndpoint, form: {'user[username]': config.wykop.username, 'user[password]': config.wykop.password}, jar:wykopSession, headers: {'User-Agent': userAgent}}, function(err, response, body){
+      if(!err && response.statusCode == 302){
+        //logged in
+        request({method: 'GET', url: 'https://www.wykop.pl/info/', jar:wykopSession}, function(err, response, body){
+          if(response.statusCode === 200){
+            hash = body.match(hashRegex)[1];
+            return cb({success: true, response: {message: 'logged in', status: 'error'}});
+          }else{
+            return cb({success: false, response: {message: 'Couldn\'t get hash', status: 'error'}})
+          }
+        });
       }else{
-        return cb({success: false, response: {message: 'Couldn\'t get hash', status: 'error'}})
+        return cb({success: false, response: {message: 'Couldn\'t login', status: 'error'}})
       }
-      });
-    }else{
-      return cb({success: false, response: {message: 'Couldn\'t login', status: 'error'}})
-    }
-  });
+    });
 }
 acceptSurvey = function(confession, user, cb){
   cb=cb||function(){};
