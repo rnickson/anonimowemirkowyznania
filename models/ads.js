@@ -10,7 +10,7 @@ var advertismentSchema = new Schema({
 });
 
 advertismentSchema.statics.random = function(callback) {
-    this.count(function(err, count) {
+    this.count({active: true}, function(err, count) {
       if (err) {
         return callback(err);
       }
