@@ -7,6 +7,9 @@ var confessionModel = require('./models/confession.js');
 var conversationModel = require('./models/conversation.js');
 var auth = require('./controllers/authorization.js');
 var accessMiddleware = require("./controllers/access.js").accessMiddleware;
+var getFlagPermissions = require("./controllers/access.js").getFlagPermissions;
+var checkIfIsAllowed = require("./controllers/access.js").checkIfIsAllowed;
+var flipPermission = require("./controllers/access.js").flipPermission;
 var replyModel = require('./models/reply.js');
 var userModel = require('./models/user.js');
 //authoriztion
@@ -69,6 +72,29 @@ adminRouter.get('/messages/', accessMiddleware('accessMessages'), (req, res)=>{
   conversationModel.find({'userID': req.user._id}, {_id: 1}, {sort:{'messages.time':-1}, limit:200}, (err, conversations)=>{
     if(err)return res.send(err);
     res.render('./admin/messages.pug', {user:req.user, conversations});
+  });
+});
+adminRouter.get('/mods/', accessMiddleware('accessModsList'), (req, res)=>{
+  userModel.find({}, {username: 1, flags:1}).lean().then(userList=>{
+    userList.forEach((user)=>{
+      user.permissions = getFlagPermissions(user.flags);
+      return user;
+    });
+    res.render("./admin/mods.pug", {user:req.user, userList:userList, canChangeUserPermissions:checkIfIsAllowed(req.user.flags, "canChangeUserPermissions")});
+  }, err=>{
+    res.json({err});
+  });
+});
+adminRouter.get('/mods/flip/:targetId/:permission', accessMiddleware('canChangeUserPermissions'), (req, res)=>{
+  userModel.findOne({_id: req.params.targetId}, {username: 1, flags:1}).then(target=>{
+    target.flags = flipPermission(target.flags, req.params.permission);
+    target.save().then(result=>{
+      res.redirect('/admin/mods');
+    }, err=>{
+      res.json({err});
+    });
+  }, err=>{
+    res.json({err});
   });
 });
 module.exports = adminRouter;
