@@ -6,6 +6,8 @@ const permissions = {
   'administration': 1<<4,
   'viewDetails': 1<<5,
   'updateTags': 1<<6,
+  'accessPanel': 1<<7,
+  'accessMessages': 1<<8,
 };
 function getFlag(permits) {
   permits=permits||[];
@@ -18,4 +20,13 @@ function getFlag(permits) {
 function checkIfIsAllowed(flag, action){
   return Boolean(flag&permissions[action]);
 }
-module.exports = checkIfIsAllowed;
+function accessMiddleware(permission){
+  return function(req, res, next){
+    if(!checkIfIsAllowed(req.user.flags, permission))
+    {
+      return res.json({success: false, response: {message: 'You\'re not allowed to perform this action'}});
+    }
+    next();
+  }
+}
+module.exports = {checkIfIsAllowed, accessMiddleware}

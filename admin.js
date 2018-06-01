@@ -6,21 +6,20 @@ var config = require('./config.js');
 var confessionModel = require('./models/confession.js');
 var conversationModel = require('./models/conversation.js');
 var auth = require('./controllers/authorization.js');
-var accessController = require('./controllers/access.js');
+var accessMiddleware = require("./controllers/access.js").accessMiddleware;
 var replyModel = require('./models/reply.js');
 var userModel = require('./models/user.js');
 //authoriztion
 adminRouter.get('/login', (req, res)=>{
-  res.render('./admin/login.jade', {user: {}});
+  res.render('./admin/login.pug', {user: {}});
 });
 adminRouter.post('/login', (req, res)=>{
   userModel.findOne({
     username: req.body.username
   }, {_id: 1, username: 1, password: 1, flags:1}, (err, user)=>{
     if(err) throw err;
-
     if(!user){
-      return res.render('./admin/login.jade', {user: {}, error: 'Nie znaleziono uzytkownia'});
+      return res.render('./admin/login.pug', {user: {}, error: 'Nie znaleziono uzytkownia'});
     }
     if(user.password === req.body.password){
       //success login
@@ -29,48 +28,47 @@ adminRouter.post('/login', (req, res)=>{
       res.cookie('token', token);
       res.redirect('/admin/confessions');
     }else{
-      return res.render('./admin/login.jade', {user: {}, error: 'Błędne hasło'});
+      return res.render('./admin/login.pug', {user: {}, error: 'Błędne hasło'});
     }
   });
 });
 adminRouter.get('/logout', (req, res)=>{
   res.clearCookie('token');
-  return res.render('./admin/login.jade', {user: {}, error: 'Wylogowano'});
+  return res.render('./admin/login.pug', {user: {}, error: 'Wylogowano'});
 });
 adminRouter.use(auth(true));
-adminRouter.get('/', (req, res)=>{
+adminRouter.get('/', accessMiddleware('accessPanel'), (req, res)=>{
   res.redirect('/admin/confessions');
 });
-adminRouter.get('/details/:confession_id', (req, res)=>{
-  if(!accessController(req.user.flags, 'viewDetails'))return res.send('You\'re not permitted to see this page.');
+adminRouter.get('/details/:confession_id', accessMiddleware('viewDetails'),  (req, res)=>{
   confessionModel.findById(req.params.confession_id).populate([{path:'actions', options:{sort: {_id: -1}}, populate: {path: 'user', select: 'username'}}, {path:'survey'}]).exec((err, confession)=>{
     if(err) return res.send(err);
     if(!confession) return res.sendStatus(404);
     confessionModel.find({IPAdress: confession.IPAdress}, {_id: 1, status: 1}, function(err, results){
       if(err)return res.send(err);
       confession.addedFromSameIP = results;
-      res.render('./admin/details.jade', {user: req.user, confession});
+      res.render('./admin/details.pug', {user: req.user, confession});
     });
   });
 });
-adminRouter.get('/confessions/:filter?', (req, res)=>{
+adminRouter.get('/confessions/:filter?',accessMiddleware('accessPanel'), (req, res)=>{
   var search = {};
   req.params.filter?search = {status: req.params.filter}:search = {};
   confessionModel.find(search).sort({_id: -1}).limit(100).exec((err, confessions)=>{
     if(err) res.send(err);
-    res.render('./admin/confessions.jade', {user: req.user, confessions: confessions});
+    res.render('./admin/confessions.pug', {user: req.user, confessions: confessions});
   });
 });
-adminRouter.get('/replies', (req, res)=>{
+adminRouter.get('/replies', accessMiddleware('accessPanel'), (req, res)=>{
   replyModel.find().populate('parentID').sort({_id: -1}).limit(100).exec((err, replies)=>{
     if(err) res.send(err);
-    res.render('./admin/replies.jade', {user:req.user, replies: replies});
+    res.render('./admin/replies.pug', {user:req.user, replies: replies});
   });
 });
-adminRouter.get('/messages/', (req, res)=>{
+adminRouter.get('/messages/', accessMiddleware('accessMessages'), (req, res)=>{
   conversationModel.find({'userID': req.user._id}, {_id: 1}, {sort:{'messages.time':-1}, limit:200}, (err, conversations)=>{
     if(err)return res.send(err);
-    res.render('./admin/messages.jade', {user:req.user, conversations});
+    res.render('./admin/messages.pug', {user:req.user, conversations});
   });
 });
 module.exports = adminRouter;

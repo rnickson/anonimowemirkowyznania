@@ -9,8 +9,6 @@ var jwt = require('jsonwebtoken');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var config = require('./config.js');
-var Wykop = require('wykop-es6-2');
-var wykop = new Wykop(config.wykop.key, config.wykop.secret);
 var md5 = require('md5');
 var apiRouter = require('./api.js');
 var adminRouter = require('./admin.js');
@@ -48,12 +46,12 @@ app.use('/api', apiRouter);
 app.use('/admin', adminRouter);
 app.use('/conversation', conversationRouter);
 app.use(auth(false));
-app.set('view engine', 'jade');
+app.set('view engine', 'pug');
 
 app.get('/', (req, res)=>{
   res.render('index');
 });
-app.post('/', (req, res)=>{
+app.post('/', async(req, res)=>{
   var confession = new confessionModel();
   if(req.body.survey&&req.body.survey.question){
     req.body.survey.answers = req.body.survey.answers.filter((e)=>{return e})
@@ -68,7 +66,8 @@ app.post('/', (req, res)=>{
   confession.embed = req.body.embed;
   confession.tags = tagController.getTags(req.body.text);
   confession.auth = crypto.randomBytes(5).toString('hex');
-  actionController(confession, null, 0);
+  var action = await actionController(confession, null, 0).save();
+  confession.actions.push(action);
   confession.save((err)=>{
     if(err) return res.send(err);
     if(req.body.survey){
@@ -87,7 +86,7 @@ app.get('/login', (req, res)=>{
 app.get('/connect', (req, res)=>{
   //req.query.connectData
   var authDetails = JSON.parse(new Buffer(req.query.connectData, 'base64').toString('utf-8'));
-  wykop.request('User', 'Login', {post: {accountkey: authDetails.token}}).then(function(response){
+  wykopController.wykop.request('User', 'Login', {post: {accountkey: authDetails.token}}).then(function(response){
     userModel.findOneAndUpdate({username: response.login}, {avatar: response.avatar, userkey: response.userkey}, {upsert: true}, (err, loggedUser)=>{
       if(err) throw err;
       var token = jwt.sign(loggedUser, config.secret, {expiresIn: 1440*60});
@@ -126,7 +125,6 @@ app.post('/reply/:confessionid', (req, res)=>{
   confessionModel.findById(req.params.confessionid, (err, confession)=>{
     if(err)return res.sendStatus(404);
     if(confession){
-    actionController(confession, null, 4);
     var reply = new replyModel();
     reply.text = req.body.text;
     reply.IPAdress = req.ip;
@@ -138,9 +136,12 @@ app.post('/reply/:confessionid', (req, res)=>{
     }
     reply.auth = crypto.randomBytes(5).toString('hex');
     reply.parentID = confession._id;
-    reply.save((err)=>{
+    reply.save(async(err)=>{
       if(err) res.send(err);
         statsModel.addAction('new_reply');
+        var action = await actionController(confession, null, 4).save();
+        confession.actions.push(action);
+        confession.save();
         res.render('reply', {success: true, reply: reply, confession: confession});
     });
     }else{
@@ -163,14 +164,17 @@ app.get('/followers/:confessionid', (req, res)=>{
   }
   });
 });
-app.get('/cotojest', (req, res)=>{
-  res.render('cotojest');
+app.get('/about', (req, res)=>{
+  res.render('about');
 });
 app.get('/twojewyznania', (req, res)=>{
   res.render('confessionsList');
 });
-app.get('/kontakt', (req, res)=>{
-  res.render('kontakt');
+app.get('/contact', (req, res)=>{
+  res.render('contact');
+});
+process.on('unhandledRejection', function(err){
+  console.log(err);
 });
 app.get('/link/:linkId/:from', function(req, res){
     advertismentModel.findOne({_id: req.params.linkId}, function(err, ad){

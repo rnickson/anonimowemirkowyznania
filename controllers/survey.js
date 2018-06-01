@@ -77,7 +77,7 @@ acceptSurvey = function(confession, user, cb){
       //its required for some reason, otherwise CALL_AND_RETRY_LAST Allocation failed - JavaScript heap out of memory
       var answers = confession.survey.answers.map((v)=>{return v;});
       var data = {body: entryBody, attachment: result.hash, 'survey[question]': confession.survey.question, 'survey[answers]': answers};
-      request({method:'POST', url: addEntryEndpoint+hash, form: data, jar:wykopSession}, function(err, response, body){
+      request({method:'POST', url: addEntryEndpoint+hash, form: data, jar:wykopSession}, async function(err, response, body){
         if(err)return cb({success: false, response: {message: 'Wykop umar', status: 'error'}});
         if(!(body.substr(0,8)=='for(;;);'))return cb({success: false, relogin: true, response:{message:'Session expired, reloging'}});
         try {
@@ -87,7 +87,8 @@ acceptSurvey = function(confession, user, cb){
           (body.search('Sesja')>-1)?flag=true:flag=false;
           return cb({success: false, relogin: flag, response: {message: body, status: 'error'}})
         }
-        actionController(confession, user._id, 1);
+        var action = await actionController(confession, user._id, 1).save();
+        confession.actions.push(action);
         confession.status = 1;
         confession.addedBy = user.username;
         confession.entryID = entryId;

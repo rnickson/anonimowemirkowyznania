@@ -1,4 +1,4 @@
-extends ./base.jade
+extends ./base.pug
 block content
   style.
     .label {
@@ -13,7 +13,7 @@ block content
       | Jeśli chcesz to zapisz ten kod: <strong>#{reply.auth}</strong> (umożliwi on Ci w przyszłościu udowodnienie autorstwa tego komentarza).
   .add-reply
     h1 Dodaj komentarz do
-      a(href='http://wykop.pl/wpis/#{confession.entryID}', target='_blank') tego wyznania
+      a(href=`http://wykop.pl/wpis/${confession.entryID}`, target='_blank') tego wyznania
     form#confession(method="post")
       .form-group
         textarea.form-control.confession#text(type="text", name="text", placeholder="Wpisz tutaj swoj komentarz" rows=10)
@@ -108,7 +108,7 @@ block content
           div.panel-heading Uczestnicy dyskusji
           div.panel-body
             each participant, index in confession.participants
-              span.label.label-info.participant(data-username="#{participant}") #{participant}
+              span.label.label-info.participant(data-username=`${participant}`) #{participant}
   script(src='/js/main.js')
 block script
   script(type="text/javascript").

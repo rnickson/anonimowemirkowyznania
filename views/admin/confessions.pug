@@ -1,4 +1,4 @@
-extends ./base.jade
+extends ./base.pug
 block content
   .container
     .row
@@ -24,19 +24,19 @@ block content
                     -var rowClass = 'warning'
                 tr(class=rowClass)
                   td
-                   a(href="details/#{confession._id}") #{confession._id}
+                   a(href=`details/${confession._id}`) #{confession._id}
                    if confession.survey
                     br
                     span.glyphicon.glyphicon-info-sign
                   td #{confession.text}
                   td
                     if confession.embed
-                      a(href="#{confession.embed}", target="_blank")
-                        img(src="#{confession.embed}", width="50", height="50" target="_blank")
+                      a(href=`#{confession.embed}`, target="_blank")
+                        img(src=`#{confession.embed}`, width="50", height="50" target="_blank")
                         |Otwórz
                   td #{confession.auth}
                   td
-                    a(href="http://wykop.pl/wpis/#{confession.entryID}", target="_blank") #{confession.entryID}
+                    a(href=`http://wykop.pl/wpis/${confession.entryID}`, target="_blank") #{confession.entryID}
                   td #{confession.addedBy}
                   td
                     button.btn.btn-success.actionButton&attributes({'data-action':'accept', 'data-id':confession.id, 'data-object':'confession'}) Dodaj

@@ -8,7 +8,7 @@ module.exports = function(loginRequired){
       if (token) {
         jwt.verify(token, config.secret, function(err, decoded) {
           if (err){
-              if(loginRequired)return res.render('./admin/login.jade', {user: {}, error: 'Sesja wygasła'});
+              if(loginRequired)return res.render('./admin/login.pug', {user: {}, error: 'Sesja wygasła'});
               return next();
             }else{
               userModel.findById(decoded._id, {_id: 1, username: 1, flags:1}, (err, user)=>{
@@ -18,7 +18,7 @@ module.exports = function(loginRequired){
             }
       });
     }else if(loginRequired){
-          return res.render('./admin/login.jade', {user: {}});
+          return res.render('./admin/login.pug', {user: {}});
     }else{
       return next();
     }

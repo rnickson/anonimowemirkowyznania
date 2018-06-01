@@ -1,4 +1,4 @@
-extends ./base.jade
+extends ./base.pug
 block content
   .container
     h2|Lista Twoich konwersacji
@@ -8,5 +8,5 @@ block content
         ul.list-group
           each conversation, index in conversations
             li.list-group-item
-              a(href='../conversation/#{conversation._id}')
+              a(href=`../conversation/${conversation._id}`)
                 |#{conversation._id}

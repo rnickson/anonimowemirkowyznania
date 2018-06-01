@@ -12,18 +12,12 @@ var actionTypes = {
   9: 'Zmodyfikowano tagi wpisu'
 }
 function createAction(confession, userId, actionType, reason){
-  var action = new actionModel();
-  action.action = actionTypes[actionType];
-  action.user = userId;
-  action.time = new Date();
-  action.type = actionType;
-  if(reason){
-    action.reason = reason;
-  }
-  action.save((err, action)=>{
-    if(err)return;
-    confession.actions.push(action._id);
-    confession.save();
+  return new actionModel({
+    action: actionTypes[actionType],
+    user: userId,
+    time: new Date(),
+    type:actionType,
+    reason:reason,
   });
 }
 module.exports = createAction;

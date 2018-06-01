@@ -1,9 +1,9 @@
-extends ./base.jade
+extends ./base.pug
 block content
   .container
     if error
       p.bg-danger #{error}
-    form(method="post" action="login")
+    form(method="post" action="/admin/login")
       input(name="username" placeholder="username")
       br
       input(name="password" type="password" placeholder="password")

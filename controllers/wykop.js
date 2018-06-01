@@ -64,13 +64,14 @@ sendPrivateMessage = function(recipient, body, cb){
 }
 acceptConfession = function(confession, user, cb){
   bodyBuildier.getEntryBody(confession, user, function(entryBody){
-    wykop.request('Entries', 'Add', {post: {body: entryBody, embed: confession.embed}}, (err, response)=>{
+    wykop.request('Entries', 'Add', {post: {body: entryBody, embed: confession.embed}}, async(err, response)=>{
       if(err){
         if(err.error.code === 11 || err.error.code === 12 || err.error.code === 13)wykop.relogin();
         return cb({success: false, response: {message: JSON.stringify(err), status: 'warning'}});
       }
       confession.entryID = response.id;
-      actionController(confession, user._id, 1);
+      var action = await actionController(confession, user._id, 1).save();
+      confession.actions.push(action);
       confession.status = 1;
       confession.addedBy = user.username;
       confession.save((err)=>{
@@ -82,10 +83,11 @@ acceptConfession = function(confession, user, cb){
 }
 addNotificationComment = function(confession, user, cb){
   cb=cb||function(){};
-  wykop.request('Entries', 'AddComment', {params: [confession.entryID], post: {body: bodyBuildier.getNotificationCommentBody(confession)}}, (err, notificationComment)=>{
+  wykop.request('Entries', 'AddComment', {params: [confession.entryID], post: {body: bodyBuildier.getNotificationCommentBody(confession)}}, async(err, notificationComment)=>{
     if(err) return cb({success: false, response: {message: err, status: 'error'}});
     confession.notificationCommentId = notificationComment.id;
-    actionController(confession, user._id, 6);
+    var action = await actionController(confession, user._id, 6).save();
+    confession.actions.push(action);
     confession.save();
     return cb({success: true, response: {message: 'notificationComment added', status: 'success'}});
   });
@@ -95,7 +97,7 @@ acceptReply = function(reply, user, cb){
   getFollowers(reply.parentID.entryID, reply.parentID.notificationCommentId, (err, followers)=>{
     if(err)return cb({success: false, response:{message:JSON.stringify(err)}});
     if(followers.length > 0)entryBody+=`\n! Wołam obserwujących: ${followers.map(function(f){return '@'+f;}).join(', ')}`;
-    wykop.request('Entries', 'AddComment', {params: [reply.parentID.entryID], post: {body: entryBody, embed: reply.embed}}, (err, response)=>{
+    wykop.request('Entries', 'AddComment', {params: [reply.parentID.entryID], post: {body: entryBody, embed: reply.embed}}, async(err, response)=>{
       if(err){
         if(err.error.code === 11 || err.error.code === 12 || err.error.code === 13)wykop.relogin();
         return cb({success: false, response: {message: JSON.stringify(err), status: 'warning'}});
@@ -103,7 +105,9 @@ acceptReply = function(reply, user, cb){
       reply.commentID = response.id;
       reply.status = 1;
       reply.addedBy = user.username;
-      actionController(reply.parentID, user._id, 8);
+      var action = await actionController(reply.parentID, user._id, 8).save();
+      reply.parentID.actions.push(action);
+      reply.parentID.save();
       reply.save((err)=>{
         if(err)return cb({success: false, response: {message: JSON.stringify(err)}});
         cb({success: true, response: {message: 'Reply added', commentID: response.id, status: 'success'}});
@@ -112,5 +116,6 @@ acceptReply = function(reply, user, cb){
   });
 }
 module.exports = {
-    acceptConfession, acceptReply, deleteEntry, sendPrivateMessage, getParticipants, addNotificationComment, getFollowers
+    acceptConfession, acceptReply, deleteEntry, sendPrivateMessage, getParticipants, addNotificationComment, getFollowers,
+    wykop
 };

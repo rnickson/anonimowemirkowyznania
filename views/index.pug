@@ -1,4 +1,4 @@
-extends ./base.jade
+extends ./base.pug
 block content
   if success
     .alert.alert-success
@@ -9,7 +9,7 @@ block content
       | Pod tym linkiem możesz przeglądać co dzieje się z twoim wyznaniem i jakie akcje zostały podjęte niego podjęte, możesz także czytać wiadomości prywatne, jeśli jakieś się pojawią. Pamiętaj! Kod jest tajny i jeśli dostanie się w ręce osób trzecich, to uzyskają one dostęp do twoich prywatnych wiadomości i będą mogły odpowiadać w twoim imieniu.
   p.info Napisz co leży Ci na sercu, a następnie post zostanie opublikowany anonimowo (z konta @AnonimoweMirkoWyznania) na mikroblogu po zaakceptowaniu.
    .add-confession
-     h1 Dodaj wyznanie
+    h1 Dodaj wyznanie
     form#confession(action="/", method="post")
       .form-group
         textarea.form-control.confession(type="text", name="text", placeholder="Wpisz tutaj swoje wyznanie" rows=10)
