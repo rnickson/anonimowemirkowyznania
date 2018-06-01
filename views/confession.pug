@@ -30,17 +30,17 @@ block content
       a.list-group-item
         p.list-group-item-text
         |#{action.action}
-        if action.reason
-          b  Powód: #{action.reason}
+        if action.note
+          b  #{action.note}
         |  #{action.time}
   h3 Konwersacje
   ul.list-group
     if confession.conversations
       each conversation, index in confession.conversations
           li.list-group-item
-            a(href=`../../conversation/${conversation}/${confession.auth}`) ${conversation}
+            a(href=`../../conversation/${conversation}/${confession.auth}`) #{conversation._id}
     else
-    p Nie masz jeszcze zadnych konwersacji
+      p Nie masz jeszcze zadnych konwersacji
 block script
   script(type="text/javascript").
     var cid = '#{confession._id}';

@@ -3,6 +3,7 @@ const adsModel = require('../models/ads.js');
 const config = require('../config.js');
 
 function getEntryBody(confession, user, cb){
+    return cb(confession.text);
     var entryBody = tagController.trimTags(`#anonimowemirkowyznania \n${confession.text}\n\n [Kliknij tutaj, aby odpowiedzieć w tym wątku anonimowo](${config.siteURL}/reply/${confession._id}) \n[Kliknij tutaj, aby wysłać OPowi anonimową wiadomość prywatną](${config.siteURL}/conversation/${confession._id}/new) \nPost dodany za pomocą skryptu AnonimoweMirkoWyznania ( ${config.siteURL} ) Zaakceptował: [${user.username}](${config.siteURL}/conversation/U_${user.username}/new)`, confession.tags);
     adsModel.random(function(err, randomAd){
         if(err || !randomAd)return cb(entryBody);
@@ -13,6 +14,7 @@ function getEntryBody(confession, user, cb){
     });
 }
 function getNotificationCommentBody(confession){
+    return "tako";
     return `Zaplusuj ten komentarz, aby otrzymywać powiadomienia o odpowiedziach w tym wątku. [Kliknij tutaj, jeśli chcesz skopiować listę obserwujących](${config.siteURL}/followers/${confession._id})`;
 }
 function getCommentBody(reply, user){
@@ -20,6 +22,6 @@ function getCommentBody(reply, user){
     if(reply.authorized){
       authorized = '\n**Ten komentarz został dodany przez osobę dodającą wpis (OP)**';
     }
-    return `**${reply.alias}**: ${reply.text}\n${authorized}\nZaakceptował: [${user.username}](${config.siteURL}/conversation/U_${user.username}/new)}`
+    return `**${reply.alias}**: ${reply.text}\n${authorized}\nZaakceptował: [${user.username}](${config.siteURL}/conversation/U_${user.username}/new)`
 }
 module.exports = {getEntryBody, getCommentBody, getNotificationCommentBody}

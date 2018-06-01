@@ -4,7 +4,7 @@ var Schema = mongoose.Schema;
 var actionSchema = new Schema({
   user:  {type: Schema.Types.ObjectId, ref: 'users'},
   action: String,
-  reason: String,
+  note: String,
   type: Number,
   time: Date
 });

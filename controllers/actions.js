@@ -7,17 +7,17 @@ var actionTypes = {
   4: 'Dodano odpowiedź',
   5: 'Usunięto z wykopu',
   6: 'Dodano komentarz obsługujący powiadomienia o nowych odpowiedziach',
-  7: 'DEPRECATED',
+  7: 'Usunięto odpowiedź',
   8: 'Zaakceptowano nową odpowiedź',
   9: 'Zmodyfikowano tagi wpisu'
 }
-function createAction(confession, userId, actionType, reason){
+function createAction(userId, actionType, note){
   return new actionModel({
     action: actionTypes[actionType],
     user: userId,
     time: new Date(),
-    type:actionType,
-    reason:reason,
+    type: actionType,
+    note: note,
   });
 }
 module.exports = createAction;

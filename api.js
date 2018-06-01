@@ -66,7 +66,7 @@ apiRouter.route('/confession/danger/:confession_id/:reason?').get(accessMiddlewa
     var status = confession.status==0?'warning':'danger';
     var actionType = confession.status==0?3:2;
     var reason = req.params.reason;
-    var action = await actionController(confession, req.user._id, actionType, reason).save();
+    var action = await actionController(req.user._id, actionType, reason).save();
     confession.actions.push(action);
     confession.save((err)=>{
       if(err) return res.json({success: false, response: {message: err}});
@@ -91,7 +91,7 @@ apiRouter.route('/confession/delete/:confession_id').get(accessMiddleware('delet
     if(err) return res.send(err);
     wykopController.deleteEntry(confession.entryID, async(err, result, deletedEntry)=>{
       if(err) return res.json({success: false, response: {message: err.error.message}});
-        var action = await actionController(confession, req.user._id, 5).save();
+        var action = await actionController(req.user._id, 5).save();
         confession.status = -1;
         confession.actions.push(action);
         confession.save((err)=>{
@@ -126,7 +126,7 @@ apiRouter.route('/reply/danger/:reply_id/').get(accessMiddleware('setStatus'), (
     reply.status==-1?reply.status=0:reply.status=-1;
     var status = reply.status==0?'warning':'danger';
     var actionType = reply.status==0?3:2;
-    var action = await actionController(reply.parentID, req.user._id, actionType).save();
+    var action = await actionController(req.user._id, actionType).save();
     reply.parentID.actions.push(action);
     reply.parentID.save();
     reply.save((err)=>{
@@ -134,6 +134,26 @@ apiRouter.route('/reply/danger/:reply_id/').get(accessMiddleware('setStatus'), (
       if(reply.status === -1)statsModel.addAction('replies_declined', req.user.username);
       res.json({success: true, response: {message: 'Status zaaktualizowany', status: status}});
     });
+  });
+});
+apiRouter.route('/reply/delete/:reply_id/').get(accessMiddleware('deleteReply'), (req, res)=>{
+  replyModel.findOne({_id: req.params.reply_id}).populate('parentID').then(reply=>{
+    wykopController.deleteComment(reply.parentID.entryID, reply.commentID, async(err, response, entry)=>{
+      if(err){
+        return res.json({success:false, response:{message:JSON.stringify(err), status:'success'}});
+      }
+      var action = await actionController(req.user._id, 7, `reply_id: ${response.id}`).save();
+      reply.parentID.actions.push(action);
+      reply.status = 0;
+      reply.commentID = null;
+      Promise.all([reply.save(), reply.parentID.save()]).then(success=>{
+        return res.json({success: true, response: {message: "Reply removed", status: "danger"}});
+      }).catch(err=>{
+        return res.json({success:false, response: {message: "Reply removed but model not updated", status: "warning"}})
+      });
+    });
+  }, err=>{
+    res.json({success:false, response: {message: "Cant get reply", status: 'success'}})
   });
 });
 module.exports = apiRouter;

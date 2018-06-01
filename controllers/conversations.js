@@ -4,9 +4,6 @@ var config = require('../config.js');
 var conversationController = {
   createNewConversation: function(parentObject, cb){
     var conversation = new conversationModel();
-    /*
-      WTF for some reason parentObject.hasOwnProperty('username') returns false
-    */
     if('username' in parentObject){
       conversation.userID = parentObject._id;
       var userFlag=true;

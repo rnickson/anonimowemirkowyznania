@@ -45,8 +45,8 @@ block content
                     h4.list-group-item-heading A:#{index} T:#{action.type}
                     p.list-group-item-text
                     |#{action.action}
-                    if action.reason
-                      b  Powód: #{action.reason}
+                    if action.note
+                      b  #{action.note}
                     if action.user
                       |  przez
                       em  #{action.user.username}

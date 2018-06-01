@@ -56,6 +56,21 @@ deleteEntry = function(entryID, cb){
     });
   });
 }
+deleteComment = function(entryID, commentID, cb){
+  var archiveModel = require('../models/archive.js');
+  wykop.request('Entries', 'Index', {params: [entryID]}, (err, entry)=>{
+    if(err) return cb(err);
+    var archive = new archiveModel();
+    archive.entry = entry['comments'].find(e=>e.id==commentID);
+    archive.save((err)=>{
+      if(err) return cb(err);
+      wykop.request('Entries', 'DeleteComment', {params: [entryID, commentID]}, (err, response)=>{
+        if(err) return cb(err);
+        return cb(null, response, entry);
+      });
+    });
+  });
+}
 sendPrivateMessage = function(recipient, body, cb){
   wykop.request('PM', 'SendMessage', {params: [recipient], post: {body}}, (err, response)=>{
     if(err)return cb(err);
@@ -70,7 +85,7 @@ acceptConfession = function(confession, user, cb){
         return cb({success: false, response: {message: JSON.stringify(err), status: 'warning'}});
       }
       confession.entryID = response.id;
-      var action = await actionController(confession, user._id, 1).save();
+      var action = await actionController(user._id, 1).save();
       confession.actions.push(action);
       confession.status = 1;
       confession.addedBy = user.username;
@@ -86,7 +101,7 @@ addNotificationComment = function(confession, user, cb){
   wykop.request('Entries', 'AddComment', {params: [confession.entryID], post: {body: bodyBuildier.getNotificationCommentBody(confession)}}, async(err, notificationComment)=>{
     if(err) return cb({success: false, response: {message: err, status: 'error'}});
     confession.notificationCommentId = notificationComment.id;
-    var action = await actionController(confession, user._id, 6).save();
+    var action = await actionController(user._id, 6).save();
     confession.actions.push(action);
     confession.save();
     return cb({success: true, response: {message: 'notificationComment added', status: 'success'}});
@@ -105,7 +120,7 @@ acceptReply = function(reply, user, cb){
       reply.commentID = response.id;
       reply.status = 1;
       reply.addedBy = user.username;
-      var action = await actionController(reply.parentID, user._id, 8).save();
+      var action = await actionController(user._id, 8).save();
       reply.parentID.actions.push(action);
       reply.parentID.save();
       reply.save((err)=>{
@@ -116,6 +131,5 @@ acceptReply = function(reply, user, cb){
   });
 }
 module.exports = {
-    acceptConfession, acceptReply, deleteEntry, sendPrivateMessage, getParticipants, addNotificationComment, getFollowers,
-    wykop
+    acceptConfession, acceptReply, deleteEntry, deleteComment, sendPrivateMessage, getParticipants, addNotificationComment, getFollowers, wykop
 };

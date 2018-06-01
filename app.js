@@ -66,7 +66,7 @@ app.post('/', async(req, res)=>{
   confession.embed = req.body.embed;
   confession.tags = tagController.getTags(req.body.text);
   confession.auth = crypto.randomBytes(5).toString('hex');
-  var action = await actionController(confession, null, 0).save();
+  var action = await actionController(null, 0).save();
   confession.actions.push(action);
   confession.save((err)=>{
     if(err) return res.send(err);
@@ -139,7 +139,7 @@ app.post('/reply/:confessionid', (req, res)=>{
     reply.save(async(err)=>{
       if(err) res.send(err);
         statsModel.addAction('new_reply');
-        var action = await actionController(confession, null, 4).save();
+        var action = await actionController(null, 4).save();
         confession.actions.push(action);
         confession.save();
         res.render('reply', {success: true, reply: reply, confession: confession});

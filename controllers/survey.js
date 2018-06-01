@@ -87,7 +87,7 @@ acceptSurvey = function(confession, user, cb){
           (body.search('Sesja')>-1)?flag=true:flag=false;
           return cb({success: false, relogin: flag, response: {message: body, status: 'error'}})
         }
-        var action = await actionController(confession, user._id, 1).save();
+        var action = await actionController(user._id, 1).save();
         confession.actions.push(action);
         confession.status = 1;
         confession.addedBy = user.username;
