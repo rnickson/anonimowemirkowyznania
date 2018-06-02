@@ -1,5 +1,5 @@
 var config = require('./config.js');
-var Wykop = require('../wykop-es6/lib/index.js');
+var Wykop = require('wykop-es6-2');
 var wykop = new Wykop(config.wykop.key, config.wykop.secret, {ssl: true});
 wykop.relogin = function(){
   wykop.userkey = undefined;
