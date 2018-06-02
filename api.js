@@ -75,15 +75,16 @@ apiRouter.route('/confession/danger/:confession_id/:reason?').get(accessMiddlewa
     });
   });
 });
-apiRouter.route('/confession/tags/:confession_id/:tag').get(accessMiddleware('updateTags'), (req, res)=>{
+apiRouter.route('/confession/tags/:confession_id/:tag').get(accessMiddleware('updateTags'), (req, res) => {
   //there's probably more clean way to do this.
-  confessionModel.findById(req.params.confession_id, async(err, confession)=>{
-    if(err)return res.send(err);
-    var action = await actionController(confession, req.user._id, 9).save();
-    confession.update({$set: {tags: tagController.prepareArray(confession.tags, req.params.tag)}, $push: { actions: action.id } }, (err)=>{
-      if(err)return res.json({success: false, response: {message: err}});
-      res.json({success: true, response: {message: 'Tagi zaaktualizowano', status: 'success'}});
-    });
+  confessionModel.findById(req.params.confession_id, async (err, confession) => {
+    if (err) return res.send(err);
+    var action = await actionController(req.user._id, 9, req.params.tag).save();
+    confession.update({ $set: { tags: tagController.prepareArray(confession.tags, req.params.tag) }, $push: { actions: action._id } }).then(success => {
+      res.json({ success: true, response: { message: 'Tagi zaaktualizowano', status: 'success' } });
+    }, function (err) {
+      return res.json({ success: false, response: { message: err } });
+    })
   });
 });
 apiRouter.route('/confession/delete/:confession_id').get(accessMiddleware('deleteEntry'), (req, res)=>{
