@@ -1,23 +1,20 @@
-nav.navbar.navbar-default.navbar-static-top
+nav.navbar.navbar-expand-lg.navbar-dark.bg-dark.mb-3
     .container
       .navbar-header
         a.navbar-brand(href='/') Anonimowe Mirko Wyznania
-        button(type="button", class="navbar-toggle collapsed", data-toggle="collapse", data-target="#navbar", aria-expanded="false", aria-controls="navbar")
-          span.sr-only Toggle navigation
-          span.icon-bar
-          span.icon-bar
-          span.icon-bar
-      #navbar.navbar-collapse
-        ul.nav.navbar-nav.navbar-right
-          li
-            a(href='/') Dodaj
-          li
-            a(href='/twojewyznania') Twoje wyznania
-          li
-            a(href='http://www.wykop.pl/tag/anonimowemirkowyznania', target='_blank') Przeglądaj dodane wyznania
-          li
-            a(href='/about') O projekcie
-          li
-            a(href='/contact') Kontakt (PGP)
-          li
-            a(href='https://github.com/cymruu/anonimowemirkowyznania', target='_blank') Github
+        button.navbar-toggler(type="button", data-toggle="collapse", data-target="#navbarSupportedContent", aria-controls="navbarSupportedContent", aria-expanded="false", aria-label="Toggle navigation")
+          span.navbar-toggler-icon
+      .collapse.navbar-collapse#navbarSupportedContent
+        ul.navbar-nav.mr-auto
+          li.nav-item
+            a.nav-link(href='/') Dodaj
+          li.nav-item
+            a.nav-link(href='/twojewyznania') Twoje wyznania
+          li.nav-item
+            a.nav-link(href='https://www.wykop.pl/tag/anonimowemirkowyznania', target='_blank') Przeglądaj dodane wyznania
+          li.nav-item
+            a.nav-link(href='/about') O projekcie
+          li.nav-item
+            a.nav-link(href='/contact') Kontakt (PGP)
+          li.nav-item
+            a.nav-link(href='https://github.com/cymruu/anonimowemirkowyznania', target='_blank') Github
