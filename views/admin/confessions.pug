@@ -31,8 +31,8 @@ block content
                   td #{confession.text}
                   td
                     if confession.embed
-                      a(href=`#{confession.embed}`, target="_blank")
-                        img(src=`#{confession.embed}`, width="50", height="50" target="_blank")
+                      a(href=confession.embed, target="_blank")
+                        img(src=confession.embed, width="50", height="50" target="_blank")
                         |Otwórz
                   td #{confession.auth}
                   td
