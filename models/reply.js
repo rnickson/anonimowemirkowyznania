@@ -11,7 +11,8 @@ var replySchema = new Schema({
     commentID: Number,
     status: {type: Number, default: 0},
     addedBy: String,
-    IPAdress: String
+    IPAdress: String,
+    remotePort: String,
 });
 
 module.exports = mongoose.model('replies', replySchema);
