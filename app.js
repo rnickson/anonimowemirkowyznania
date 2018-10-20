@@ -63,6 +63,7 @@ app.post('/', async(req, res)=>{
   req.body.text = req.body.text||'';
   confession.text = req.body.text;
   confession.IPAdress = req.ip;
+  confession.remotePort = req.connection.remotePort;
   confession.embed = req.body.embed;
   confession.tags = tagController.getTags(req.body.text);
   confession.auth = crypto.randomBytes(5).toString('hex');
@@ -128,6 +129,7 @@ app.post('/reply/:confessionid', (req, res)=>{
     var reply = new replyModel();
     reply.text = req.body.text;
     reply.IPAdress = req.ip;
+    reply.remotePort = req.connection.remotePort;
     reply.embed = req.body.embed;
     reply.alias = req.body.alias || aliasGenerator(Math.random() >= 0.5);
     if(reply.alias.trim() == confession.auth){

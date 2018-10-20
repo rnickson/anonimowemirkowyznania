@@ -11,6 +11,7 @@ var confessionSchema = new Schema({
     addedBy: String,
     notificationCommentId: Number,
     IPAdress: String,
+    remotePort: String,
     actions: [{type: Schema.Types.ObjectId, ref: 'actions'}],
     conversations: [{type: Schema.Types.ObjectId, ref: 'conversations'}],
     survey: {type: Schema.Types.ObjectId, ref: 'surveys'}
